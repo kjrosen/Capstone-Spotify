@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/css/style.css">
+
+        <title>{% block head %}  {% endblock%}</title>
+    </head>
+    <body class="wait">
+        <div class="navbar">
+            <span>New Playlist</span>
+            <span>Search Playlists</span>
+            <span>{% block navbar %}  {% endblock %}</span>
+        </div>
+
+        <div>
+            {% block content %} 
+
+            {% endblock %} 
+        </div>
+
+        <div class="navbar">
+            <span>Connect to Spotify</span>
+            <span>{%block footer %}  {%endblock %}</span>
+        </div>
+
+    </body>
+</html>
+
+
+
