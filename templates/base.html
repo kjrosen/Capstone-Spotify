@@ -1,28 +1,31 @@
+<!DOCTYPE html>
 <html>
     <head>
         <link rel="stylesheet" href="/static/css/style.css">
+		<link rel="icon" href="/static/images/spotibanana.png">
 
         <title>{% block head %}  {% endblock%}</title>
     </head>
-    <body class="wait">
+    <body>
         <div class="navbar">
             <span>New Playlist</span>
             <span>Search Playlists</span>
             <span>{% block navbar %}  {% endblock %}</span>
         </div>
 
-        <div>
+        <div class="wait">
             {% block content %} 
 
             {% endblock %} 
         </div>
 
-        <div class="navbar">
+    </body>
+	<footer>
+		<div class="navbar">
             <span>Connect to Spotify</span>
             <span>{%block footer %}  {%endblock %}</span>
         </div>
-
-    </body>
+	</footer>
 </html>
 
 
