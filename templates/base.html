@@ -1,30 +1,49 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="/static/css/style.css">
+	<head>
+		<link rel="stylesheet" href="/static/css/style.css">
 		<link rel="icon" href="/static/images/spotibanana.png">
 
-        <title>{% block head %}  {% endblock%}</title>
-    </head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+
+		<title>{% block head %}  {% endblock%}</title>
+	</head>
     <body>
-        <div class="navbar">
-            <span>New Playlist</span>
-            <span>Search Playlists</span>
-            <span>{% block navbar %}  {% endblock %}</span>
-        </div>
+			<div class="header">
+				<a href="/">Playlist Maker</a>
+			</div>
 
-        <div class="wait">
-            {% block content %} 
+			<div class="navbar">
+				<a href="/write_new">New Playlist</a>
+				<span>Search Playlists</span>
+				<!-- at Click, the search generates a drop down search bar
+				at submit, the search fills in a div on the right hand of page-->
 
-            {% endblock %} 
-        </div>
+				<!-- To go here:
+					when logged in, show 'My Playlists' - redirects to that specific page
+					when logged out, show 'Login/Create Account' - drop down login menu
+					drop down uses the class .popbar
+				 -->
+			</div>
+
+			<div class="wait">
+				{% block content %} 
+
+				{% endblock %} 
+			</div>
 
     </body>
 	<footer>
 		<div class="navbar">
-            <span>Connect to Spotify</span>
-            <span>{%block footer %}  {%endblock %}</span>
-        </div>
+			<span>Connect to Spotify</span>
+			<!-- Figure out how to make connecting to Spofity a link and do the thing -->
+			<!-- To go here:
+					when logged in, show 'Account Info'
+					allow for password changing and account deletion'
+				-->
+		</div>
 	</footer>
 </html>
 
