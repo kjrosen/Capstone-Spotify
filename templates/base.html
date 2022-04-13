@@ -4,6 +4,7 @@
 		<link rel="stylesheet" href="/static/css/style.css">
 		<link rel="icon" href="/static/images/spotibanana.png">
 
+		<!-- The package that makes React work -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
 		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
@@ -16,33 +17,21 @@
 			</div>
 
 			<div class="navbar">
-				<a href="/write_new">New Playlist</a>
-				<span>Search Playlists</span>
-				<!-- at Click, the search generates a drop down search bar
-				at submit, the search fills in a div on the right hand of page-->
-
-				<!-- To go here:
-					when logged in, show 'My Playlists' - redirects to that specific page
-					when logged out, show 'Login/Create Account' - drop down login menu
-					drop down uses the class .popbar
-				 -->
+				<script type="text/jsx" src="static/js/navbar.jsx"></script>
 			</div>
 
 			<div class="wait">
 				{% block content %} 
 
 				{% endblock %} 
+				<span id="new_playlist"></span>
+				<span id="search_result"></span>
 			</div>
 
     </body>
 	<footer>
 		<div class="navbar">
-			<span>Connect to Spotify</span>
-			<!-- Figure out how to make connecting to Spofity a link and do the thing -->
-			<!-- To go here:
-					when logged in, show 'Account Info'
-					allow for password changing and account deletion'
-				-->
+			<p>   </p>
 		</div>
 	</footer>
 </html>

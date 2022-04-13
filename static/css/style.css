@@ -12,23 +12,17 @@ body {
     margin-top: 3%;
 }
 
-#playlist-maker {
+#popbar {
     padding: 1em;
     background-color:rgb(22, 40, 23);
     width: fit-content;
+    place-self: right;
 }
 
 .wait {
     background-image: url('/static/images/disneylandWait.jpg');
     height: 500px;
     width: 100%;
-}
-
-.popbar {
-    width: 30%;
-    background-color:rgb(71, 161, 71);
-    color:black;
-    text-align: left;
 }
 
 .navbar {
@@ -43,27 +37,7 @@ body {
 }
 
 .navbar span {
-    margin-right: 2em;
-}
-
-.navbar a:visited {
-    color: rgb(255, 241, 240);
-}
-
-.header a:visited{
-    color:rgb(0, 26, 11);
-}
-
-.navbar a:link {
-    color: rgb(255, 241, 240);
-}
-
-.header a:link {
-    color:rgb(0, 26, 11);
-}
-
-.navbar a {
-    margin-right: 2em;
+    padding-right: 1em;
 }
 
 .header {
@@ -73,5 +47,9 @@ body {
     color:rgb(0, 26, 11);
     text-align: center;
     padding: 2%;
-    width: 90%;
+    width: 100%;
+}
+
+.header a:visited {
+    color:rgb(0, 26, 11);
 }
