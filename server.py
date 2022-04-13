@@ -2,7 +2,15 @@ from flask import Flask, render_template, request, redirect, session
 import jinja2
 import os
 
+import spotipy
+
+
 app = Flask(__name__)
+
+app.secret_key = os.environ['SECRET_KEY']
+
+spot_ID = os.environ['SPOT_ID']
+spot_SH = os.environ['SPOT_SH']
 
 @app.route('/')
 def homepage():
