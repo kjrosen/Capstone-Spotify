@@ -12,27 +12,26 @@
 		<title>{% block head %}  {% endblock%}</title>
 	</head>
     <body>
-			<div class="header">
+			<div id="header">
 				<a href="/">Playlist Maker</a>
 			</div>
 
-			<div class="navbar">
-				<script type="text/jsx" src="static/js/navbar.jsx"></script>
+			<div id="navbar">
+				<a href="/write_new">New Playlist</a>
+				<a href="/search">Search</a>
+				<a href="/join">Log In</a>
+				<a href="/my_playlists">My Playlists</a>
 			</div>
 
-			<div class="wait">
-				{% block content %} 
-
-				{% endblock %} 
-				<span id="new_playlist"></span>
-				<span id="search_result"></span>
+			<div id="result-boxes">
+				<span id="right-block">{% block right %} {% endblock %}</span>
+				<span id="left-block">{% block left %} {% endblock %}</span>
 			</div>
-
     </body>
 	<footer>
-		<div class="navbar">
-			<p>   </p>
-		</div>
+		{% block foot %}
+		
+		{% endblock %}
 	</footer>
 </html>
 

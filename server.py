@@ -10,9 +10,15 @@ def homepage():
 
 @app.route('/write_new')
 def make_playlist():
-    '''search through spotify api looking for songtitles fitting 
-    words from the given phrase'''
-    pass
+    return render_template('new_playlist.html')
+
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
+@app.route('/join')
+def sign_in():
+    return render_template('accounts.html')
 
 @app.route('/my_playlists')
 def show_user_playlists():
