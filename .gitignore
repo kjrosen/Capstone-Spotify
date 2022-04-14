@@ -2,4 +2,5 @@ env
 *.sh
 *pyc*
 *DS_*
+*.cache
 

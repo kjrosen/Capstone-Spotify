@@ -16,8 +16,11 @@ app = Flask(__name__)
 
 app.secret_key = os.environ['SECRET_KEY']
 
+collection="bcdefghijklmnopqrstuvwxyz"
+
+# for char
 ##returns a library
-results = spot.search(q='track:',type='track',limit=50)
+results = spot.search(q='name:',type='track',limit=50)
 '''relevant info is results['tracks']['items']
 will result in a list full of libraries
 
