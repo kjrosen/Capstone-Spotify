@@ -3,10 +3,15 @@
 {% block head %}Make nonsense here{% endblock %} 
 
 {% block left %}
-Playlist goes here
+    <h1>Playlist generates here</h1>
+    <h3>Each playlist has a save event built in</h3>
 {% endblock %} 
 
 {% block right %} 
-Playlist form and 
-Save playlist form goes here
+    <form>
+        <label for="search">
+            <input type="text" id="new">
+            <button type="submit"">Make Playlist</button>
+        </label>
+    </form>
 {% endblock %} 

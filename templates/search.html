@@ -2,10 +2,17 @@
 
 {% block head %}Search nonsense here{% endblock %} 
 
-{% block left %} 
-Search results go here
+{% block left %}
+    <h1>Search results generate here</h1>
+    <h3>Each result is an event to pull up a different playable playlist</h3>
+    <h3>Every playlist has a save event built in</h3>
 {% endblock %} 
 
 {% block right %} 
-Search form goes here
+    <form>
+        <label for="search">
+            <input type="text" id="search">
+            <button type="submit">Search Playlists</button>
+        </label>
+    </form>
 {% endblock %} 
