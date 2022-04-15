@@ -17,11 +17,36 @@ if __name__ == "__main__":
 
     connect_to_db(app, "music")
 
-class Track(db.model):
+class Track(db.Model):
     '''a song on spotify'''
 
     __tablename__ = 'tracks'
 
-    track_uri = db.Column(db.String, primary_key=True)
+    uri = db.Column(db.String, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    artist = db.Column(db.String, nullable=False)
+
+class SeenIn(db.Model):
+    '''the accessory link between tracks and playlists'''
+
+class Playlist(db.Model):
+    '''any playlist created with the app'''
+
+    __tablename__ = 'playlists'
+
+    uri = db.Column(db.String, primary_key=True)
+    author = db.Column(db.String, nullable=False)
+
+class Likes(db.Model):
+    '''the accessory link between users and playlists they didn't author
+    can be called and showed but don't have other value'''
+
+class User(db.Model):
+    '''a user on the app'''
+
+    __tablename__ = 'users'
+
+    id_ = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    pw = db.Column(db.String, nullable=False)
 

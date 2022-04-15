@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 app.secret_key = os.environ['SECRET_KEY']
 
-collection="bcdefghijklmnopqrstuvwxyz"
+collection="abcdefghijklmnopqrstuvwxyz"
 
 # for char
 ##returns a library

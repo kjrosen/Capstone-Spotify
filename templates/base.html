@@ -20,7 +20,9 @@
 				<a href="/write_new">New Playlist</a>
 				<a href="/search">Search</a>
 				<a href="/join">Log In</a>
-				<a href="/my_playlists">My Playlists</a>
+				{% if session['login'] %}
+					<a href="/my_playlists">My Playlists</a>
+				{% endif %}
 			</div>
 
 			<div id="result-boxes">
