@@ -20,13 +20,14 @@ collection="abcdefghijklmnopqrstuvwxyz"
 
 # for char
 ##returns a library
-results = spot.search(q='name:',type='track',limit=50)
+# results = spot.search(q='',type='track',limit=50)
 '''relevant info is results['tracks']['items']
 will result in a list full of libraries
 
 songs = results['tracks']['items']
 will want song['name'] for checks
-and song['uri'] for further fetching'''
+and song['uri'] for further fetching
+song['artists'][0]['name'] to get artist name'''
 
 
 
