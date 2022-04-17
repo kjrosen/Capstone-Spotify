@@ -16,7 +16,7 @@ model.connect_to_db(server.app)
 model.db.create_all()
 
 ## songs collected from letters and common word searches
-file = open('tracks.json', 'w')
+file = open('data/tracks.json').read()
 
 all_tracks = json.loads(file)
 
@@ -34,5 +34,5 @@ def fill_tracks(tracks=all_tracks):
 
     return tracks
 
-
+all_tracks = fill_tracks()
 
