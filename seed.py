@@ -6,6 +6,7 @@ import os
 import crud
 import model
 import server
+import json
 
 ## give the commands to drop and recreate db
 os.system('dropdb music')
@@ -14,9 +15,24 @@ os.system('createdb music')
 model.connect_to_db(server.app)
 model.db.create_all()
 
-## TODO: perform number of API searches to load tracks into db
-## save the db in a sql file
-## reload that sql file here to seed it as a reset
+## songs collected from letters and common word searches
+file = open('tracks.json', 'w')
 
-model.db.session.add_all()
-model.db.session.commit()
+all_tracks = json.loads(file)
+
+def fill_tracks(tracks=all_tracks):
+    '''take in a json file and seed the tracks table of db'''
+
+    track_list = []
+    for track in tracks:
+        new = crud.create_track(
+            track, tracks[track][0], tracks[track][1])
+        track_list.append(new)
+
+    model.db.session.add_all(track_list)
+    model.db.session.commit()
+
+    return tracks
+
+
+

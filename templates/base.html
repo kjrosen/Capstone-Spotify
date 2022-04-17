@@ -17,9 +17,27 @@
 			</div>
 
 			<div id="navbar">
+				<!-- TODO: Add a JS link here to make the navbar interactive 
+				
+				New playlist should generate a search bar in place
+				results appear in block left 
+				block right - Save bar generated if logged in
+				Create account generated if not-->
 				<a href="/write_new">New Playlist</a>
+
+				<!-- Search generate a search bar in place
+				results appear in block right
+				selecting a playlist generates playlist in block left -->
 				<a href="/search">Search</a>
+
+				<!-- Log In generates a form in block right 
+				if email in database and password correct, log them in
+				if email in database and password incorrect, prompt recorrect
+				if email not in database, add create account fields to form
+				(ask for nickname, spotify uri, confirm email and password)-->
 				<a href="/join">Log In</a>
+
+				<!-- links to /my_playlists -->
 				{% if session['login'] %}
 					<a href="/my_playlists">My Playlists</a>
 				{% endif %}
