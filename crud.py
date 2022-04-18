@@ -2,6 +2,22 @@
 
 from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
 
+## all of this is in server.py as well. Decide where it should live permanently
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+
+##spotipy finds the credentials in the environment and sets it to auth_manager
+##for searching and ClientCredentials flow
+authorization = SpotifyClientCredentials()
+spot = spotipy.Spotify(auth_manager=authorization)
+url = 'https://api.spotify.com/v1/search?'
+app_id = os.environ['APP_ID']
+
+scope = 'playlist-modify-public'
+spot2 = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+#################################################################################
+
+
 def check_email(email):
     '''checks if email is already in db'''
 
@@ -13,7 +29,6 @@ def check_email(email):
 
     return (len(check) == 1, check)
     
-
 def log_in(email, password):
     '''checks a user's password, returns true if logged in
     flase if password wrong'''
@@ -24,9 +39,8 @@ def log_in(email, password):
 
         if user[1][0].pw == password:
             return True
-        else:
-            return False
-
+    
+    return False
 
 def create_account(email, password, name):
     user = check_email(email)
@@ -38,6 +52,27 @@ def create_account(email, password, name):
         return True
     else: 
         return False
+
+
+def make_playlist(text):
+    '''  '''
+
+    text = text.split()
+
+    finds = {}
+    for word in text.split():
+        finds[word] = Track.query.filter(Track.title==word).all()
+
+    for find in finds:
+        if len(finds[find]) == 0:
+            spot.search(q=find, type='track', limit=50)
+
+
+def make_track(result):
+    '''goes through set of API search results and turns into tracks'''
+
+    
+
 
 
 def create_track(URI, title, artist):

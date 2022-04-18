@@ -8,12 +8,17 @@ import crud
 import model
 
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
 ##spotipy finds the credentials in the environment and sets it to auth_manager
+##for searching and ClientCredentials flow
 authorization = SpotifyClientCredentials()
 spot = spotipy.Spotify(auth_manager=authorization)
 url = 'https://api.spotify.com/v1/search?'
+app_id = os.environ['APP_ID']
+
+scope = 'playlist-modify-public'
+spot2 = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
 app = Flask(__name__)
 model.connect_to_db(app)
@@ -29,6 +34,11 @@ songs = results['tracks']['items']
 will want song['name'] for checks
 and song['uri'] for further fetching
 song['artists'][0]['name'] to get primary artist name'''
+
+# tracks = spot.playlist_tracks(playlist_id)
+# new = spot2.user_playlist_create(app_id, 'test')
+'''new playlist redirects to a new page, set it specifically
+play more with the redirect and authorization, it's confusing'''
 
 
 @app.route('/')
@@ -49,11 +59,10 @@ def sign_in():
 
     if user == True:
         session['login'] = True
-        return render_template('/my_playlists.html')
+        return redirect('/my_playlists')
     if user == False:
         flash('Wrong password and/or email')
-        return render_template('/join.html')
-
+        return redirect('/join')
 
 @app.route('/join_up', methods=['POST'])
 def sign_up():
@@ -67,12 +76,17 @@ def sign_up():
 
     if check == True:
         session['login'] = True
-        return render_template('/my_playlists.html')
+        return redirect('/my_playlists')
     else: 
         flash('Email taken')
-        return render_template('/join.html')
-        
+        return redirect('/join')
 
+@app.route('/logout')
+def logout():
+    '''logs a user out'''
+    session['login'] = False
+
+    return redirect('/')        
 
 
 
@@ -81,11 +95,22 @@ def show_user_playlists():
     return render_template('my_playlists.html')
 
 
-@app.route('/write_new')
-def make_playlist():
+
+@app.route('/new_playlist')
+def new_playlist():
     '''this will eventually not render to a new page
     ideally will be handled by REACT'''
     return render_template('new_playlist.html')
+
+@app.route('/make', methods=['POST'])
+def make_playlsit():
+    '''search through the database to fill out the playlist'''
+
+    name = request.form.get('new')
+    
+    tracks = crud.make_playlist(name)
+
+    return redirect('/new_playlist')
 
 
 @app.route('/search')

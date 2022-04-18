@@ -17,35 +17,20 @@
 			</div>
 
 			<div id="navbar">
-				<span id="flash">
-					{% for message in get_flashed_messages() %}
-					  <li>{{ message }}</li>
-					{% endfor %}
-				</span>
 				<!-- <script type="text/jsx" src="/static//js/navbar.jsx"></script> -->
-				<!-- TODO: Add a JS link here to make the navbar interactive 
+				<!-- TODO: Add a JS link here to make the navbar interactive -->
 				
-				New playlist should generate a search bar in place
-				results appear in block left 
-				block right - Save bar generated if logged in
-				Create account generated if not-->
-				<a href="/write_new">Write One</a>
-
-				<!-- Search generate a search bar in place
-				results appear in block right
-				selecting a playlist generates playlist in block left -->
+				<a href="/new_playlist">New Playlist</a>
 				<a href="/search">Search</a>
 
-				<!-- Log In generates a form in block right 
-				if email in database and password correct, log them in
-				if email in database and password incorrect, prompt recorrect
-				if email not in database, add create account fields to form
-				(ask for nickname, spotify uri, confirm email and password)-->
-				<a href="/join">Join</a>
+				{% if session['login'] == False %} 
+					<a href="/join">Join</a>
+				{% endif %}
 
 				<!-- links to /my_playlists -->
 				{% if session['login'] == True %}
 					<a href="/my_playlists">My Playlists</a>
+					<a href="/logout">Log out</a>
 				{% endif %}
 			</div>
 
@@ -53,7 +38,15 @@
 
 			<div id="result-boxes">
 				<span id="left-block"><div>{% block left %} {% endblock %}</div></span>
-				<span id="right-block"><div>{% block right %} {% endblock %}</div></span>
+				<span id="right-block">
+					<div id="flash">
+						<ul>
+						{% for message in get_flashed_messages() %}
+						  <li>{{ message }}</li>
+						{% endfor %}
+						</ul>
+					</div>
+					<div>{% block right %} {% endblock %}</div></span>
 			</div>
     </body>
 	<footer>

@@ -8,9 +8,9 @@
 {% endblock %} 
 
 {% block right %} 
-    <form name="writer" method="POST">
-        <label for="new">
-            <input type="text" id="new">
+    <form action="/make" method="POST">
+        <label>Write your own playlist
+            <input type="text" name="new">
             <button type="submit"">Make Playlist</button>
         </label>
     </form>
