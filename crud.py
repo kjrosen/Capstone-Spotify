@@ -1,6 +1,43 @@
 """logic/functions/methods for database"""
 
-from model import Track, Feat, Playlist, Likes, User, connect_to_db
+from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
+
+def check_email(email):
+    '''checks if email is already in db'''
+
+    print()
+    print(email)
+    check = User.query.filter(User.email==email).all()
+    print(check)
+    print()
+
+    return (len(check) == 1, check)
+    
+
+def log_in(email, password):
+    '''checks a user's password, returns true if logged in
+    flase if password wrong'''
+
+    user = check_email(email)
+
+    if user[0] == True:
+
+        if user[1][0].pw == password:
+            return True
+        else:
+            return False
+
+
+def create_account(email, password, name):
+    user = check_email(email)
+
+    if user[0] == False:
+        new = create_user(name=name, email=email, pw=password)
+        db.session.add(new)
+        db.session.commit()
+        return True
+    else: 
+        return False
 
 
 def create_track(URI, title, artist):
