@@ -45,7 +45,7 @@ def sign_up():
     in_pass = request.form.get('password')
     in_name = request.form.get('name')
 
-    check = crud.create_account(in_email, in_pass, in_name)
+    check = crud.make_account(in_email, in_pass, in_name)
 
     if check == True:
         session['login'] = True
@@ -67,8 +67,9 @@ def make_playlsit():
     '''search through the database to fill out the playlist'''
 
     name = request.form.get('new')
+    ##TODO: change how the login session works to get the userid to act as creator
     
-    tracks = crud.make_playlist(name)
+    playlist = crud.make_playlist(name)
 
     return render_template('/new_playlist')
 

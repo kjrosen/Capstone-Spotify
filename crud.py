@@ -114,7 +114,7 @@ def log_in(email, password):
     
     return False
 
-def create_account(email, password, name):
+def make_account(email, password, name):
     user = check_email(email)
 
     if user[0] == False:
@@ -131,10 +131,18 @@ def create_account(email, password, name):
 def search_tracks_by_title(text):
     '''search for songs from db for each phrase in a text'''
 
-    finds = [text, Track.query.filter(Track.title.like(f'{text} %')).all()]
+    upper = text.upper()
+    title = text.title()
+    lower = text.lower()
+    options = [upper, title, lower]
+
+    finds = [text, []]
+    for opt in options:
+        search = Track.query.filter(Track.title.like(f'{opt}%')).all()
+        for item in search:
+            finds[1].append(item)
 
     return finds
-
 
 def search_api(word):
     '''performs an api search for the given phrase'''
@@ -142,7 +150,6 @@ def search_api(word):
     result = spot.search(q=word, type='track', limit=50)
 
     return result
-
 
 def make_track(results):
     '''goes through set of API search results and turns into tracks'''
@@ -157,7 +164,6 @@ def make_track(results):
 
     db.session.add_all(new)
     db.session.commit()
-
 
 def find_songs_for_play(phrase):
     '''searches through db, api, on repeat until tracks all found'''
@@ -183,9 +189,37 @@ def find_songs_for_play(phrase):
 
     return search
 
+def pick_songs(playlists):
+    '''pick a random option from the results to pick for playlist'''
 
+    picks = []
+    for keyword in playlists:
+        if len(keyword[1]) > 0:
+            picks.append(choice(keyword[1]))
 
+    return picks
 
+def make_playlist(phrase, creator=1):
+    '''takes in a given phrase and makes a spotify playlist full of songs
+    currently the first word from title spells out the word
+    
+    TODO: change to closer title matches'''
+
+    new = spot.user_playlist_create(app_id, phrase)
+
+    options = find_songs_for_play(phrase)
+    final = pick_songs(options)
+
+    ids = []
+    for song in final:
+        ids.append(song.uri)
+
+    spot.playlist_add_items(new['id'], ids)
+
+    playlist = create_playlist(new['uri'], phrase, creator)
+
+    db.session.add(playlist)
+    db.session.commit()
 
 
 
