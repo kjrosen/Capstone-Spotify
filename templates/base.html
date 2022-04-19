@@ -17,14 +17,14 @@
 			</div>
 
 			<div id="navbar">
-				<!-- <script type="text/jsx" src="/static//js/navbar.jsx"></script> -->
+				
 				<!-- TODO: Add a JS link here to make the navbar interactive -->
 				
-				<a href="/new_playlist">New Playlist</a>
-				<a href="/search">Search</a>
+				<span id="writer">New Playlist</span>
+				<span id="search">Search</span>
 
 				{% if session['login'] == False %} 
-					<a href="/join">Join</a>
+					<span id="join">Join</span>
 				{% endif %}
 
 				<!-- links to /my_playlists -->
@@ -32,6 +32,7 @@
 					<a href="/my_playlists">My Playlists</a>
 					<a href="/logout">Log out</a>
 				{% endif %}
+				<script src="/static/js/navbar.js"></script>
 			</div>
 
 			
@@ -46,6 +47,7 @@
 						{% endfor %}
 						</ul>
 					</div>
+					<div id="pop-bars"></div>
 					<div>{% block right %} {% endblock %}</div></span>
 			</div>
     </body>
