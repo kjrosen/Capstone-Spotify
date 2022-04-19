@@ -1,6 +1,7 @@
 """logic/functions/methods for database"""
 
 from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
+from random import choice
 
 ## imported to crud from server on 4/19
 import os
@@ -130,9 +131,7 @@ def create_account(email, password, name):
 def search_tracks_by_title(text):
     '''search for songs from db for each phrase in a text'''
 
-    finds = []
-    for word in text:
-        finds.append([word, Track.query.filter(Track.title.like(f'%{word}%')).all()])
+    finds = [text, Track.query.filter(Track.title.like(f'{text} %')).all()]
 
     return finds
 
@@ -163,16 +162,24 @@ def make_track(results):
 def find_songs_for_play(phrase):
     '''searches through db, api, on repeat until tracks all found'''
     
-    text = phrase.split(" ")
+    text = phrase.split()
 
-    search = search_tracks_by_title(text)
+    search = []
+    for word in text:
+        search.append(search_tracks_by_title(word))
+
     for result in search:
 
+        queries = 0
         while len(result[1]) == 0:
             new_search = search_api(result[0])
+            queries += 1
             make_track(new_search)
 
-            result[1] = search_tracks_by_title(result[0])
+            result[1] = search_tracks_by_title(result[0])[1]
+
+            if queries >= 50:
+                break
 
     return search
 
