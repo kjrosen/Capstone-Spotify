@@ -2,7 +2,7 @@
 
 from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
 
-## all of this is in server.py as well. Decide where it should live permanently
+## imported to crud from server on 4/19
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -16,8 +16,78 @@ app_id = os.environ['APP_ID']
 
 scope = 'playlist-modify-public'
 spot2 = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
-#################################################################################
 
+
+'''
+# results = spot.search(q='',type='track',limit=50)
+songs = results['tracks']['items']
+for song in songs:
+    song['uri']
+    song['name']
+    song['artists'][0]['name']
+
+# tracks = spot.playlist_tracks(playlist_id)
+
+# new = spot2.user_playlist_create(app_id, 'play_name')
+new playlist redirects to a new page, set it specifically
+play more with the redirect and authorization, it's confusing
+'''
+
+
+## below functions create new instances for each table
+
+def create_track(URI, title, artist):
+    """take Spotify info and return a new track in local db."""
+    
+    track = Track(
+        uri=URI,
+        title=title,
+        artist=artist)
+    
+    return track
+
+def create_feat(track, playlist):
+    """Create a connection between track and playlist"""
+    
+    feat = Feat(
+        track_uri=track,
+        play_uri=playlist)
+    
+    return feat
+
+def create_playlist(URI, name, creator):
+    """Create and return a new playlist"""
+
+    playlist = Playlist(
+        uri=URI, 
+        name=name, 
+        creator_id=creator)
+
+    return playlist
+
+def create_like(user, playlist):
+    """Create a connection between a playlist and a user who didn't author it"""
+
+    like = Likes(
+        like_id= str(user)+playlist,
+        user_id = user,
+        play_id = playlist)
+
+    return like
+
+def create_user(name, email, pw, URI=None):
+    """Add a new user to the app"""
+    
+    user = User(
+        uri=URI,
+        name=name,
+        email=email,
+        pw = pw)
+    
+    return user
+
+
+## functions for creating an account, logging in, and confirming email isn't taken
 
 def check_email(email):
     '''checks if email is already in db'''
@@ -55,26 +125,24 @@ def create_account(email, password, name):
         return False
 
 
-def make_playlist(text):
-    '''  '''
+## functions for creating playlists from user input phrases
 
-    text = text.split()
+def search_tracks_by_title(text):
+    '''search for songs from db for each phrase in a text'''
 
-    finds = {}
-    for word in text.split():
-        finds[word] = Track.query.filter(Track.title==word).all()
-
-    for find in finds:
-        if len(finds[find]) == 0:
-            result = spot.search(q=find, type='track', limit=50)
-            tracks = make_track(result)
-
-            for track in tracks:
-                if track.title == find:
-                    finds[find] = [track]
-                    break
+    finds = []
+    for word in text:
+        finds.append([word, Track.query.filter(Track.title.like(f'%{word}%')).all()])
 
     return finds
+
+
+def search_api(word):
+    '''performs an api search for the given phrase'''
+
+    result = spot.search(q=word, type='track', limit=50)
+
+    return result
 
 
 def make_track(results):
@@ -82,72 +150,41 @@ def make_track(results):
 
     new = []
     for item in results['tracks']['items']:
-        if Track.queryget(item['uri']) == None:
+        if Track.query.get(item['uri']) == None:
             new.append(create_track(
                 item['uri'], 
                 item['name'], 
-                item['artist'][0]['name']))
+                item['artists'][0]['name']))
 
     db.session.add_all(new)
     db.session.commit()
 
 
-
-
-
-def create_track(URI, title, artist):
-    """take Spotify info and return a new track in local db."""
+def find_songs_for_play(phrase):
+    '''searches through db, api, on repeat until tracks all found'''
     
-    track = Track(
-        uri=URI,
-        title=title,
-        artist=artist)
+    text = phrase.split(" ")
+
+    search = search_tracks_by_title(text)
+    for result in search:
+
+        while len(result[1]) == 0:
+            new_search = search_api(result[0])
+            make_track(new_search)
+
+            result[1] = search_tracks_by_title(result[0])
+
+    return search
+
+
+
+
+
+
+
+
     
-    return track
 
-
-def create_feat(track, playlist):
-    """Create a connection between track and playlist"""
-    
-    feat = Feat(
-        track_uri=track,
-        play_uri=playlist)
-    
-    return feat
-
-
-def create_playlist(URI, name, creator):
-    """Create and return a new playlist"""
-
-    playlist = Playlist(
-        uri=URI, 
-        name=name, 
-        creator_id=creator)
-
-    return playlist
-
-
-def create_like(user, playlist):
-    """Create a connection between a playlist and a user who didn't author it"""
-
-    like = Likes(
-        like_id= str(user)+playlist,
-        user_id = user,
-        play_id = playlist)
-
-    return like
-
-
-def create_user(name, email, pw, URI=None):
-    """Add a new user to the app"""
-    
-    user = User(
-        uri=URI,
-        name=name,
-        email=email,
-        pw = pw)
-    
-    return user
 
 
 if __name__ == '__main__':

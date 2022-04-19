@@ -3,27 +3,26 @@
 // prints the navbar, wich each item an event trigger showing new forms or links
 
 // item 1: new playlist
-
 const pen = document.getElementById('writer');
 
 pen.addEventListener('click', (evt) => {
     const box = document.getElementById('pop-bars');
 
-    box.innerHTML = '<form action="/make" method="POST"><label>Write your own playlist<input type="text" name="new"><button type="submit"">Make Playlist</button></label></form>';
+    box.innerHTML = '<form action="/make"><label><input type="text" name="new"><br /><button type="submit">Make Playlist</button></label></form>';
 })
 
-// item 2: search bar
 
+// item 2: search bar
 const search = document.getElementById('search');
 
 search.addEventListener('click', (evt) => {
     const box = document.getElementById('pop-bars');
 
-    box.innerHTML = '<form name="searcher" method="POST"><label for="search"><input type="text" id="search"><button type="submit">Search Playlists</button></label></form>';
+    box.innerHTML = '<form action="/search"><label><input type="text" name="search"><br /><button type="submit">Search Playlists</button></label></form>';
 })
 
-// (conditional on session info) item 3: log in/sign up
 
+// (conditional on session info) item 3: log in/sign up
 const login = document.getElementById('join');
 
 login.addEventListener('click', (evt) => {

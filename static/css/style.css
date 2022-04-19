@@ -26,6 +26,10 @@ body {
     padding: 1%;
 }
 
+#navbar span {
+    margin-right: 1em;
+}
+
 #navbar a {
     margin-right: 1em;
     color:rgb(255, 241, 240);
