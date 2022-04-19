@@ -34,5 +34,23 @@ def fill_tracks(tracks=all_tracks):
 
     return tracks
 
-all_tracks = fill_tracks()
+fill_tracks()
+
+
+def fill_users():
+    new = [crud.create_user('Admin', 'hbplaymaker@gmail.com', os.environ['APP_PASS'], os.environ['APP_ID'])]
+
+    for n in range(2, 20):
+        email = f'test{n}@email.com'
+        name = str(n)+'@gmail.com'
+        pw = f'{n}{n+1}{n+2}{n+3}'
+
+        new.append(crud.create_user(email, pw, name))
+
+    new.append(crud.create_user('The Boss', 'kayejrosen@gmail.com', os.environ['ME_PASS'], os.environ['ME_ID']))
+
+    model.db.session.add_all(new)
+    model.db.session.commit()
+
+fill_users()
 

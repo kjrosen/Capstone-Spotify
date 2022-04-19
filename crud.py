@@ -3,6 +3,7 @@
 from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
 
 ## all of this is in server.py as well. Decide where it should live permanently
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
@@ -65,13 +66,32 @@ def make_playlist(text):
 
     for find in finds:
         if len(finds[find]) == 0:
-            spot.search(q=find, type='track', limit=50)
+            result = spot.search(q=find, type='track', limit=50)
+            tracks = make_track(result)
+
+            for track in tracks:
+                if track.title == find:
+                    finds[find] = [track]
+                    break
+
+    return finds
 
 
-def make_track(result):
+def make_track(results):
     '''goes through set of API search results and turns into tracks'''
 
-    
+    new = []
+    for item in results['tracks']['items']:
+        if Track.queryget(item['uri']) == None:
+            new.append(create_track(
+                item['uri'], 
+                item['name'], 
+                item['artist'][0]['name']))
+
+    db.session.add_all(new)
+    db.session.commit()
+
+
 
 
 
