@@ -52,5 +52,5 @@ def fill_users():
     model.db.session.add_all(new)
     model.db.session.commit()
 
-fill_users()
+# fill_users()
 
