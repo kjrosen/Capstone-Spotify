@@ -20,18 +20,17 @@
 				
 				<!-- TODO: Add a JS link here to make the navbar interactive -->
 				
-				<span id="writer">New Playlist</span>
-				<span id="search">Search</span>
-
-				{% if session['login'] == False %} 
-					<span id="join">Join</span>
-				{% endif %}
+				<span id="maker">New Playlist</span>
+				<span id="searcher">Search</span>
 
 				<!-- links to /my_playlists -->
-				{% if session['login'] == True %}
+				{% if session['login'] %}
 					<a href="/my_playlists">My Playlists</a>
 					<a href="/logout">Log out</a>
+				{% else %}
+					<span id="join">Join</span>
 				{% endif %}
+				
 				<script src="/static/js/navbar.js"></script>
 			</div>
 

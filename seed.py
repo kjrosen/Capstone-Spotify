@@ -25,8 +25,12 @@ def fill_tracks(tracks=all_tracks):
 
     track_list = []
     for track in tracks:
+        
         new = crud.create_track(
-            track, tracks[track][0], tracks[track][1])
+            track, 
+            tracks[track][0], 
+            tracks[track][1]
+            )
         track_list.append(new)
 
     model.db.session.add_all(track_list)
@@ -37,20 +41,49 @@ def fill_tracks(tracks=all_tracks):
 fill_tracks()
 
 
-def fill_users():
-    new = [crud.create_user('Admin', 'hbplaymaker@gmail.com', os.environ['APP_PASS'], os.environ['APP_ID'])]
 
-    for n in range(2, 20):
-        email = f'test{n}@email.com'
-        name = str(n)+'@gmail.com'
-        pw = f'{n}{n+1}{n+2}{n+3}'
+file = open('data/users.json').read()
+all_users = json.loads(file)
 
-        new.append(crud.create_user(email, pw, name))
+def fill_users(users=all_users):
 
-    new.append(crud.create_user('The Boss', 'kayejrosen@gmail.com', os.environ['ME_PASS'], os.environ['ME_ID']))
+    user_list = []
+    for user_ in users:
+        new = crud.create_user(
+            users[user_][1], 
+            users[user_][2], 
+            users[user_][3],
+            users[user_][0],
+        )
 
-    model.db.session.add_all(new)
+        user_list.append(new)
+
+
+    model.db.session.add_all(user_list)
     model.db.session.commit()
 
-# fill_users()
+fill_users()
 
+
+
+file = open('data/playlists.json').read()
+all_plays = json.loads(file)
+
+def fill_playlists(plays=all_plays):
+    
+    play_list = []
+    for play in plays:
+        new = crud.create_playlist(
+            play, 
+            plays[play][0], 
+            plays[play][1],
+            plays[play][2],
+        )
+
+        play_list.append(new)
+
+
+    model.db.session.add_all(play_list)
+    model.db.session.commit()
+
+fill_playlists()

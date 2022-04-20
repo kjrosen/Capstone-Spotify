@@ -56,13 +56,14 @@ def create_feat(track, playlist):
     
     return feat
 
-def create_playlist(URI, name, creator):
+def create_playlist(URI, name, creator, hype=0):
     """Create and return a new playlist"""
 
     playlist = Playlist(
         uri=URI, 
         name=name, 
-        creator_id=creator)
+        creator_id=creator,
+        hype=hype)
 
     return playlist
 
@@ -127,6 +128,14 @@ def make_account(email, password, name):
 
 
 ## functions for creating playlists from user input phrases
+def make_search_options(phrase):
+    '''make many options for each word in the phrase to use for SQL searches
+    look for upper.(), title.(), lower() of each word
+    then those options followed by different punctuation
+    then abbreviations for each version
+    then each word plus the one after it, and the one after that
+    then each word plus one before, and one before that
+    then each word plus one before and one after'''
 
 def search_tracks_by_title(text):
     '''search for songs from db for each phrase in a text'''
@@ -135,19 +144,20 @@ def search_tracks_by_title(text):
     title = text.title()
     lower = text.lower()
     options = [upper, title, lower]
+    '''replace with the make_search_options from above'''
 
     finds = [text, []]
     for opt in options:
-        search = Track.query.filter(Track.title.like(f'{opt}%')).all()
+        search = Track.query.filter(Track.title.like(f'{opt} %')).all()
         for item in search:
             finds[1].append(item)
 
     return finds
 
-def search_api(word):
+def search_api(word, offset=0):
     '''performs an api search for the given phrase'''
 
-    result = spot.search(q=word, type='track', limit=50)
+    result = spot.search(q=word, type='track', limit=50, offset=offset)
 
     return result
 
@@ -170,6 +180,7 @@ def find_songs_for_play(phrase):
     
     text = phrase.split()
 
+    '''impliment the make_search_options function once it's completed'''
     search = []
     for word in text:
         search.append(search_tracks_by_title(word))
@@ -178,13 +189,13 @@ def find_songs_for_play(phrase):
 
         queries = 0
         while len(result[1]) == 0:
-            new_search = search_api(result[0])
+            new_search = search_api(result[0], queries)
             queries += 1
             make_track(new_search)
 
             result[1] = search_tracks_by_title(result[0])[1]
 
-            if queries >= 50:
+            if queries > 10:
                 break
 
     return search
@@ -205,7 +216,7 @@ def make_playlist(phrase, creator=1):
     
     TODO: change to closer title matches'''
 
-    new = spot.user_playlist_create(app_id, phrase)
+    new = spot2.user_playlist_create(app_id, phrase)
 
     options = find_songs_for_play(phrase)
     final = pick_songs(options)
