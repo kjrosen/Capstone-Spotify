@@ -92,37 +92,38 @@ def create_user(name, email, pw, URI=None):
 ## functions for creating an account, logging in, and confirming email isn't taken
 
 def check_email(email):
-    '''checks if email is already in db'''
+    '''checks if email is already in db, returns query search'''
 
-    print()
-    print(email)
     check = User.query.filter(User.email==email).all()
-    print(check)
-    print()
 
-    return (len(check) == 1, check)
+    return check
     
 def log_in(email, password):
-    '''checks a user's password, returns true if logged in
-    flase if password wrong'''
+    '''checks a user's password, returns their id if successful
+    flase if password wrong or email not in db'''
 
     user = check_email(email)
 
-    if user[0] == True:
+    if len(user) == 1:
+        user = user[0]
 
-        if user[1][0].pw == password:
-            return True
+        if user.pw == password:
+            return user.user_id
     
     return False
 
 def make_account(email, password, name):
-    user = check_email(email)
+    '''checks if user email is taken
+    if not, creates an account
+    returns new users' id
+    
+    returns false if email is taken'''
 
-    if user[0] == False:
+    if len(check_email(email)) == 0:
         new = create_user(name=name, email=email, pw=password)
         db.session.add(new)
         db.session.commit()
-        return True
+        return new.user_id
     else: 
         return False
 

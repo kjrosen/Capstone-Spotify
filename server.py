@@ -30,12 +30,12 @@ def sign_in():
     ##log in checks database information
     user = crud.log_in(in_email, in_pass)
 
-    if user == True:
-        session['login'] = True
-        return redirect('/my_playlists')
     if user == False:
         flash('Wrong password and/or email')
-        return redirect('/join')
+        return redirect('/')
+    else:
+        session['login'] = user
+        return redirect('/my_playlists')
 
 @app.route('/join_up', methods=['POST'])
 def sign_up():
@@ -45,14 +45,15 @@ def sign_up():
     in_pass = request.form.get('password')
     in_name = request.form.get('name')
 
-    check = crud.make_account(in_email, in_pass, in_name)
+    user = crud.make_account(in_email, in_pass, in_name)
 
-    if check == True:
-        session['login'] = True
-        return redirect('/my_playlists')
-    else: 
+    if user == False:
         flash('Email taken')
-        return redirect('/join')
+        return redirect('/')
+    else:
+        session['login'] = user
+        return redirect('/my_playlists')
+        
 
 @app.route('/logout')
 def logout():
@@ -66,10 +67,10 @@ def logout():
 def make_playlsit():
     '''search through the database to fill out the playlist'''
 
-    name = request.form.get('new')
-    ##TODO: change how the login session works to get the userid to act as creator
+    # name = request.form.get('new')
+    # ##TODO: change how the login session works to get the userid to act as creator
     
-    playlist = crud.make_playlist(name)
+    # playlist = crud.make_playlist(name)
 
     return render_template('/new_playlist')
 

@@ -24,14 +24,13 @@
 				<span id="searcher">Search</span>
 
 				<!-- links to /my_playlists -->
-				{% if session['login'] %}
+				{% if session['login'] != False %}
 					<a href="/my_playlists">My Playlists</a>
 					<a href="/logout">Log out</a>
 				{% else %}
 					<span id="join">Join</span>
 				{% endif %}
 				
-				<script src="/static/js/navbar.js"></script>
 			</div>
 
 
@@ -50,6 +49,7 @@
 			</div>
     </body>
 	<footer>
+		<script src="/static/js/navbar.js"></script>
 		{% block foot %}
 		
 		{% endblock %}
