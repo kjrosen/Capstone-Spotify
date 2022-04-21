@@ -66,7 +66,7 @@ fill_users()
 
 
 
-file = open('data/playlists.json').read()
+file = open('data/plays.json').read()
 all_plays = json.loads(file)
 
 def fill_playlists(plays=all_plays):
@@ -87,3 +87,4 @@ def fill_playlists(plays=all_plays):
     model.db.session.commit()
 
 fill_playlists()
+

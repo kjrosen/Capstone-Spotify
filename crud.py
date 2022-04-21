@@ -232,20 +232,43 @@ def make_playlist(phrase, creator=1):
     db.session.commit()
 
 
-## function for searching through the db for playlists featuring keywords
-## looks through track title and artists
+# function for searching through the db for playlists featuring keywords
+# looks through track title and artists
 
 # def search_db(query):
 #     '''searches through playlist db for query keywords'''
     
 #     results = []
 
-#     title_matches = Track.query.filter_by(Track.title.like(f'%{query}%')).all()
-#     artist_matches = Track.query.filter_by(Track.artist.like(f'%{query}%')).all()
-
-#     for song in title_matches:
-#         results.append(Playlist.query.filter_by(Playlist.tracks))
     
+
+
+
+def make_feats(playlist):
+
+    tracks = spot.playlist_items(playlist.play_id)
+    items = tracks['items']
+    feats = []
+    for item in items:
+        id = item['track']['id']
+        title = item['track']['name']
+        artist = item['track']['artists'][0]['name']
+
+
+        if Track.query.get(id) == None:
+            song = create_track(id, title, artist)
+            db.session.add(song)
+            db.session.commit()
+
+        feat = create_feat(id, playlist.play_id)
+        feats.append(feat)
+
+    db.session.add_all(feats)
+    db.session.commit()
+
+    return feats
+        
+
 
 
 
