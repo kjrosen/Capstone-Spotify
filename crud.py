@@ -37,11 +37,11 @@ play more with the redirect and authorization, it's confusing
 
 ## below functions create new instances for each table
 
-def create_track(URI, title, artist):
+def create_track(track_id, title, artist):
     """take Spotify info and return a new track in local db."""
     
     track = Track(
-        uri=URI,
+        track_id=track_id,
         title=title,
         artist=artist)
     
@@ -51,18 +51,18 @@ def create_feat(track, playlist):
     """Create a connection between track and playlist"""
     
     feat = Feat(
-        track_uri=track,
-        play_uri=playlist)
+        track_id=track,
+        play_id=playlist)
     
     return feat
 
-def create_playlist(URI, name, creator, hype=0):
+def create_playlist(play_id, name, creator_id, hype=0):
     """Create and return a new playlist"""
 
     playlist = Playlist(
-        uri=URI, 
+        play_id=play_id, 
         name=name, 
-        creator_id=creator,
+        creator_id=creator_id,
         hype=hype)
 
     return playlist
@@ -77,11 +77,11 @@ def create_like(user, playlist):
 
     return like
 
-def create_user(name, email, pw, URI=None):
+def create_user(name, email, pw, spot_id=None):
     """Add a new user to the app"""
     
     user = User(
-        uri=URI,
+        spot_id=spot_id,
         name=name,
         email=email,
         pw = pw)
@@ -129,14 +129,7 @@ def make_account(email, password, name):
 
 
 ## functions for creating playlists from user input phrases
-def make_search_options(phrase):
-    '''make many options for each word in the phrase to use for SQL searches
-    look for upper.(), title.(), lower() of each word
-    then those options followed by different punctuation
-    then abbreviations for each version
-    then each word plus the one after it, and the one after that
-    then each word plus one before, and one before that
-    then each word plus one before and one after'''
+## TODO: tighten up the search with searcher-helper functions
 
 def search_tracks_by_title(text):
     '''search for songs from db for each phrase in a text'''
@@ -145,7 +138,7 @@ def search_tracks_by_title(text):
     title = text.title()
     lower = text.lower()
     options = [upper, title, lower]
-    '''replace with the make_search_options from above'''
+    '''replace with the make_search_options from new file'''
 
     finds = [text, []]
     for opt in options:
@@ -167,9 +160,9 @@ def make_track(results):
 
     new = []
     for item in results['tracks']['items']:
-        if Track.query.get(item['uri']) == None:
+        if Track.query.get(item['id']) == None:
             new.append(create_track(
-                item['uri'], 
+                item['id'], 
                 item['name'], 
                 item['artists'][0]['name']))
 
@@ -218,24 +211,40 @@ def make_playlist(phrase, creator=1):
     TODO: change to closer title matches'''
 
     new = spot2.user_playlist_create(app_id, phrase)
+    author = User.query.get(creator)
 
     options = find_songs_for_play(phrase)
     final = pick_songs(options)
 
     ids = []
     for song in final:
-        ids.append(song.uri)
+        ids.append(song.track_id)
 
     spot.playlist_add_items(new['id'], ids)
 
-    playlist = create_playlist(new['uri'], phrase, creator)
+    playlist = create_playlist(new['id'], phrase, creator)
+    play_fs = [playlist]
+    for song in final:
+        feat = create_feat(song.track_id, playlist.play_id)
+        play_fs.append(feat)
 
-    db.session.add(playlist)
+    db.session.add_all(play_fs)
     db.session.commit()
 
 
+## function for searching through the db for playlists featuring keywords
+## looks through track title and artists
 
+# def search_db(query):
+#     '''searches through playlist db for query keywords'''
+    
+#     results = []
 
+#     title_matches = Track.query.filter_by(Track.title.like(f'%{query}%')).all()
+#     artist_matches = Track.query.filter_by(Track.artist.like(f'%{query}%')).all()
+
+#     for song in title_matches:
+#         results.append(Playlist.query.filter_by(Playlist.tracks))
     
 
 

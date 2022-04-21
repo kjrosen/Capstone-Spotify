@@ -1,22 +1,20 @@
 'use strict';
 
-// sent event triggers for each item in the navbar, showing new forms or links
+// sets eventListners for each item in the navbar
+
+// for item 1 the playlist maker and item 2 the playlist searcher
 
 // search and make are functionally identical
 // below is the html, with spots available for
-const form_open = '<form action="'                          //route action
+const form_open = '<form id="'                          //route action
 const input_label = '"><label><input type="text" name="'    //input name
 const button = '"><br /><button type="submit">'             //button display
 const closers = '</button></label></form>'
-
 const bar_ids = [
-    ['maker', '/make', 'new', 'Make Playlist'], 
-    ['searcher', '/search', 'query', 'Search']
+    ['maker', 'make', 'new', 'Make Playlist'], 
+    ['searcher', 'search', 'query', 'Search']
 ];
 
-
-// for item 1 the playlist maker, 
-// and item 2 the playlist searcher
 for (const bar of bar_ids) {
     const id = bar[0];
     const action = bar[1];
@@ -54,11 +52,3 @@ login.addEventListener('click', (evt) => {
 
     box.innerHTML = login +'<br />'+ signup
 });
-
-
-// sub pop-up items made with above events
-
-// 1: make playlist sends an ajax request and fills Left with new playlist
-// 2: search playlist sends an ajax request and fills Left with search results
-// 3: clicking playlist from search results moves results to Right
-//    selected playlist to Left

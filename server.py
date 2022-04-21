@@ -54,7 +54,6 @@ def sign_up():
         session['login'] = user
         return redirect('/my_playlists')
         
-
 @app.route('/logout')
 def logout():
     '''logs a user out'''
@@ -63,23 +62,25 @@ def logout():
     return redirect('/')        
 
 
+
 @app.route('/make')
 def make_playlsit():
     '''search through the database to fill out the playlist'''
 
     # name = request.form.get('new')
-    # ##TODO: change how the login session works to get the userid to act as creator
     
     # playlist = crud.make_playlist(name)
 
     return render_template('/new_playlist')
 
 
+
 @app.route('/search')
 def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
 
-
+    query = request.args.get('query')
+    return crud.search_by_keywords(query)
 
 
 @app.route('/my_playlists')
