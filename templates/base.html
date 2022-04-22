@@ -18,28 +18,36 @@
 
 			<div id="navbar">
 
-				<!-- links to /my_playlists -->
+				<!-- Check session data to show either
+				A - link to my playlists and logout indicator -->
 				{% if session['login'] != False %}
 					<a href="/my_playlists">My Playlists</a>
 					<a href="/logout">Log out</a>
+				<!-- B - an event target to show the login route 
+				event in navbar.js -->
 				{% else %}
 					<span id="joiner">Join</span>
-					<!-- has its own js file with listener? -->
 				{% endif %}
 
 			</div>
 
 
 			<div id="result-boxes">
+				<!-- Left block shows search results -->
 				<span id="left-block"><div>{% block left %} {% endblock %}</div></span>
+				<!-- Right block shows input forms -->
 				<span id="right-block">
 					<div id="flash">
 						<ul>
+							<!-- Flash any messages (login info) -->
 						{% for message in get_flashed_messages() %}
 						  <li>{{ message }}</li>
 						{% endfor %}
 						</ul>
 					</div>
+					<!-- Uses Navbar.js events to send fetch request
+					Generates an embedded Spotify playlist in Left 
+					Create a like button on Right-->
 					<form id="make">
 						<label>
 							<input type="text" id="new"><br>
@@ -47,22 +55,28 @@
 						</label>
 					</form>
 					<br>
+					<!-- Uses Navbar.js events to send fetch request
+					Generates list of playlists-->
 					<form id="search">
 						<label>
 							<input type="text" id="query"><br>
 							<button type="submit">Search</button><br>
 						</label>
 					</form>
+					<!-- Navbar.js will fill with login forms
+					otherwise stay empty -->
 					<form id="login" action="/log_in" method="POST">
 
 					</form>
 					<form id="sing-up" action="/join_up" methods="POST">
 
 					</form>
+					<span id="like"></span>
 					<div>{% block right %} {% endblock %}</div></span>
 			</div>
     </body>
 	<footer id="foot">
+		<!-- if the user is logged in - so js doesn't complain -->
 		{% if session['login'] != False %} <span id="joiner"></span> {% endif %}
 		<script src="/static/js/navbar.js"></script>
 		{% block foot %}

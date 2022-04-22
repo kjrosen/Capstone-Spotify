@@ -47,12 +47,12 @@ def create_track(track_id, title, artist):
     
     return track
 
-def create_feat(track, playlist):
+def create_feat(track_id, playlist_id):
     """Create a connection between track and playlist"""
     
     feat = Feat(
-        track_id=track,
-        play_id=playlist)
+        track_id=track_id,
+        play_id=playlist_id)
     
     return feat
 
@@ -67,13 +67,13 @@ def create_playlist(play_id, name, creator_id, hype=0):
 
     return playlist
 
-def create_like(user, playlist):
+def create_like(user_id, playlist_id):
     """Create a connection between a playlist and a user who didn't author it"""
 
     like = Likes(
-        like_id= str(user)+playlist,
-        user_id = user,
-        play_id = playlist)
+        like_id= str(user_id)+playlist_id,
+        user_id = user_id,
+        play_id = playlist_id)
 
     return like
 
@@ -92,7 +92,7 @@ def create_user(name, email, pw, spot_id=None):
 ## functions for creating an account, logging in, and confirming email isn't taken
 
 def check_email(email):
-    '''checks if email is already in db, returns query search'''
+    '''checks if email is already in db, returns list of user exists '''
 
     check = User.query.filter(User.email==email).all()
 
@@ -204,14 +204,15 @@ def pick_songs(playlists):
 
     return picks
 
-def make_playlist(phrase, creator=1):
+def make_playlist(phrase, author):
     '''takes in a given phrase and makes a spotify playlist full of songs
     currently the first word from title spells out the word
-    
-    TODO: change to closer title matches'''
+    '''
 
-    new = spot2.user_playlist_create(app_id, phrase)
-    author = User.query.get(creator)
+    if author.spot_id == None:
+        new = spot2.user_playlist_create(app_id, phrase)
+    else:
+        new = spot2.user_playlist_create(author.spot_id, phrase)
 
     options = find_songs_for_play(phrase)
     final = pick_songs(options)
@@ -222,7 +223,7 @@ def make_playlist(phrase, creator=1):
 
     spot.playlist_add_items(new['id'], ids)
 
-    playlist = create_playlist(new['id'], phrase, creator)
+    playlist = create_playlist(new['id'], phrase, author.user_id)
     play_fs = [playlist]
     for song in final:
         feat = create_feat(song.track_id, playlist.play_id)
@@ -252,7 +253,8 @@ def search_db(query):
     results = where.all()
     final = []
     for item in results:
-        final += [item.play_id, item.name, item.creator_id]
+        author = User.query.get(item.creator_id)
+        final.append([item.play_id, item.name, author.name])
 
     return final
 

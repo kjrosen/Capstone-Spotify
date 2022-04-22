@@ -12,7 +12,7 @@ app = Flask(__name__)
 model.connect_to_db(app)
 
 app.secret_key = os.environ['SECRET_KEY']
-
+ADMIN = model.User.query.get(1)
 
 @app.route('/')
 def homepage():
@@ -28,14 +28,14 @@ def sign_in():
     in_pass = request.form.get('password')
 
     ##log in checks database information
-    user = crud.log_in(in_email, in_pass)
+    user_id = crud.log_in(in_email, in_pass)
 
-    if user == False:
+    if user_id == False:
         flash('Wrong password and/or email')
         return redirect('/')
     else:
-        session['login'] = user
-        return redirect('/my_playlists')
+        session['login'] = user_id
+        return redirect('/')
 
 @app.route('/join_up', methods=['POST'])
 def sign_up():
@@ -45,14 +45,14 @@ def sign_up():
     in_pass = request.form.get('password')
     in_name = request.form.get('name')
 
-    user = crud.make_account(in_email, in_pass, in_name)
+    user_id = crud.make_account(in_email, in_pass, in_name)
 
-    if user == False:
+    if user_id == False:
         flash('Email taken')
         return redirect('/')
     else:
-        session['login'] = user
-        return redirect('/my_playlists')
+        session['login'] = user_id
+        return redirect('/')
         
 @app.route('/logout')
 def logout():
@@ -67,9 +67,14 @@ def logout():
 def make_playlsit():
     '''search through the database to fill out the playlist'''
 
-    # name = request.form.get('new')
+    name = request.form.get('new')
+    if session['login'] == False:
+        author = ADMIN
+    else:
+        author = model.User.query.get(session['login'])
+
     
-    # playlist = crud.make_playlist(name)
+    playlist = crud.make_playlist(name, author)
 
     return render_template('/new_playlist')
 
@@ -83,7 +88,6 @@ def search_playlists():
     result = crud.search_db(query)
 
     return jsonify(result)
-
 
 @app.route('/my_playlists')
 def show_user_playlists():
