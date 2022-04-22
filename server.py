@@ -1,6 +1,6 @@
 '''Flask Server for project'''
 
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import jinja2
 import os
 
@@ -80,7 +80,11 @@ def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
 
     query = request.args.get('query')
-    return crud.search_by_keywords(query)
+    print("*"*30)
+    print(query)
+    print("*"*40)
+
+    return jsonify(crud.search_by_keywords(query))
 
 
 @app.route('/my_playlists')

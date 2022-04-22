@@ -235,43 +235,51 @@ def make_playlist(phrase, creator=1):
 # function for searching through the db for playlists featuring keywords
 # looks through track title and artists
 
-# def search_db(query):
-#     '''searches through playlist db for query keywords'''
+def search_db(query):
+    '''searches through playlist db for query keywords
+
+    SELECT name FROM playlists AS P
+    JOIN feats AS f ON p.play_id=f.play_id
+    JOIN tracks AS t ON f.track_id=t.track_id
+    WHERE t.title LIKE '%keyword%' OR t.artist LIKE '%keyword%'
+    '''
+
+    play_q = db.session.query(Playlist.name)
+    join_feat = play_q.join(Feat, Playlist.play_id==Feat.play_id)
+    play_feat_track = join_feat.join(Track, Track.track_id==Feat.track_id)
     
-#     results = []
+    results = play_feat_track.filter((Track.title.like(f'{query}%')) | (Track.artist.like(f'{query}%')))
 
-    
-
-
-
-def make_feats(playlist):
-
-    tracks = spot.playlist_items(playlist.play_id)
-    items = tracks['items']
-    feats = []
-    for item in items:
-        id = item['track']['id']
-        title = item['track']['name']
-        artist = item['track']['artists'][0]['name']
-
-
-        if Track.query.get(id) == None:
-            song = create_track(id, title, artist)
-            db.session.add(song)
-            db.session.commit()
-
-        feat = create_feat(id, playlist.play_id)
-        feats.append(feat)
-
-    db.session.add_all(feats)
-    db.session.commit()
-
-    return feats
-        
-
-
+    return results.all()
 
 
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)
+
+
+
+
+# def make_feats(playlist):
+
+#     tracks = spot.playlist_items(playlist.play_id)
+#     items = tracks['items']
+#     feats = []
+#     for item in items:
+#         id = item['track']['id']
+#         title = item['track']['name']
+#         artist = item['track']['artists'][0]['name']
+
+
+#         if Track.query.get(id) == None:
+#             song = create_track(id, title, artist)
+#             db.session.add(song)
+#             db.session.commit()
+
+#         feat = create_feat(id, playlist.play_id)
+#         feats.append(feat)
+
+#     db.session.add_all(feats)
+#     db.session.commit()
+
+#     return feats

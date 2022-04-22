@@ -1,6 +1,26 @@
 'use strict';
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function Search(props) {
     const query = {
         type: document.getElementById("query").value
@@ -14,7 +34,8 @@ function Search(props) {
                 'Content-Type': 'application/json',
             },
         })
-    }
+            .then()
+        }
 
     return (
         <label htmlFor="searchInput">

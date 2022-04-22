@@ -5,9 +5,9 @@
 		<link rel="icon" type="image/x-icon" href="/static/images/spotibanana.png">
 
 		<!-- The package that makes React work -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
 		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
 
 		<title>{% block head %}  {% endblock%}</title>
 	</head>
@@ -28,9 +28,10 @@
 					<a href="/my_playlists">My Playlists</a>
 					<a href="/logout">Log out</a>
 				{% else %}
-					<span id="join">Join</span>
+					<span id="joiner">Join</span>
+					<!-- has its own js file with listener? -->
 				{% endif %}
-				
+
 			</div>
 
 
@@ -44,12 +45,22 @@
 						{% endfor %}
 						</ul>
 					</div>
-					<div id="pop-bars"></div>
+					<form id="pop-bars">
+						
+					</form>
+					<form id="login">
+
+					</form>
+					<form id="sing-up">
+
+					</form>
 					<div>{% block right %} {% endblock %}</div></span>
 			</div>
     </body>
 	<footer>
+		<span id="joiner"></span>
 		<script src="/static/js/navbar.js"></script>
+		<script src="/static/js/db_requests.js"></script>
 		{% block foot %}
 		
 		{% endblock %}
