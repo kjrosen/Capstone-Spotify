@@ -2,8 +2,8 @@
 
 // reacting to the optional Join navbar item
 const joiner = document.getElementById('joiner')
-
 // on click the input bars appear in Rigt block
+//submit goes to either /log_in or /join_up depd on button
 joiner.addEventListener('click', (evt) => {
 	// TODO: 
 	// Passwords are being taken insecurily apparnetly
@@ -19,20 +19,20 @@ joiner.addEventListener('click', (evt) => {
 
 	loginBox.innerHTML = email+pw+logbutt
 	signUpBox.innerHTML = name+email+pw+signbutt
-});//submit goes to either /log_in or /join_up depd on button
+});
 
 
-// takes input from search bar and sends a fetch request
-// goes to /search and returns list of playlists
+// reacts to search bar in base navbar
 const searchBox = document.getElementById('search');
-   
+// takes input from search bar and sends a fetch request
+// goes to /search and returns list of playlists 
 searchBox.addEventListener('submit', (evt) => {
 	evt.preventDefault();
 
 	const query = {query: document.getElementById('query').value};
 	const queryString = new URLSearchParams(query).toString();
 
-	fetch(`/search?${queryString}`)
+	fetch(`/search.json?${queryString}`)
 		.then(results => results.json())
 		.then(resLists => {
 
@@ -46,15 +46,12 @@ searchBox.addEventListener('submit', (evt) => {
 			// set a nested event listener to make each playlist linkable
 			// clicking pulls up full playlist
 			const plays = document.querySelectorAll('#left-block li');
+			const searchBox = document.getElementById('search-embed');
 
-			// plays.innerText = "Test";
 			for (const play of plays) {
 				play.addEventListener('click', (evt) => {
-					
-
-
-
-
+					const playlist = evt.target.id;
+					searchBox.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
 				});
 			}
 		});
@@ -62,6 +59,36 @@ searchBox.addEventListener('submit', (evt) => {
 
 
 
+
+
+// the event that pulls up new playlist creation
+//'''''Should this be a route change instead of an event?''''
+// const maker = document.getElementById('make')
+// // takes input text from the bar and sends a fetch request
+// // goes to /make.json and pulls up playlist embed info
+// maker.addEventListener('submit', (evt) => {
+// 	evt.preventDefault();
+
+// 	const name = {query: document.getElementById('new').value};
+// 	const queryString = new URLSearchParams(name).toString();
+
+
+// });
+
+
+
+
+
+
+
+// window.onSpotifyIframeApiReady = (IFrameAPI) => {
+// 	let element = document.getElementById('search-embed');
+// 	let options = {
+// 		uri: 'spotify:playlist:1rzfBVpG5TrvMITcPpcYC9'
+// 	};
+// 	let callback = (EmbedController) => {};
+// 	IFrameAPI.createController(element, options, callback);
+// };
     
 
 

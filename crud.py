@@ -207,6 +207,8 @@ def pick_songs(playlists):
 def make_playlist(phrase, author):
     '''takes in a given phrase and makes a spotify playlist full of songs
     currently the first word from title spells out the word
+
+    returns the playlist id
     '''
 
     if author.spot_id == None:
@@ -232,6 +234,8 @@ def make_playlist(phrase, author):
     db.session.add_all(play_fs)
     db.session.commit()
 
+    return playlist.play_id
+
 
 # function for searching through the db for playlists featuring keywords
 # looks through track title and artists
@@ -252,10 +256,15 @@ def search_db(query):
     
     results = where.all()
     final = []
-    for item in results:
-        author = User.query.get(item.creator_id)
-        final.append([item.play_id, item.name, author.name])
-
+    print("$"*100)
+    print(results)
+    if len(results) > 0:
+        for item in results:
+            author = User.query.get(item.creator_id)
+            final.append([item.play_id, item.name, author.name])
+    else:
+        final.append(["None", "No results", "Community"])
+    print(final)
     return final
 
 

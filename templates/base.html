@@ -3,6 +3,8 @@
 	<head>
 		<link rel="stylesheet" href="/static/css/style.css">
 		<link rel="icon" type="image/x-icon" href="/static/images/spotibanana.png">
+		<!-- lets me embed spotify playlists on the page -->
+		<!-- <script src="https://open.spotify.com/embed-playlist/iframe-api/v1" async></script> -->
 
 		<!-- The package that makes React work -->
 		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
@@ -21,7 +23,7 @@
 				<!-- Check session data to show either
 				A - link to my playlists and logout indicator -->
 				{% if session['login'] != False %}
-					<a href="/my_playlists">My Playlists</a>
+					<a href="/mine">My Playlists</a>
 					<a href="/logout">Log out</a>
 				<!-- B - an event target to show the login route 
 				event in navbar.js -->
@@ -48,9 +50,9 @@
 					<!-- Uses Navbar.js events to send fetch request
 					Generates an embedded Spotify playlist in Left 
 					Create a like button on Right-->
-					<form id="make">
+					<form id="make" action="/make" method="POST">
 						<label>
-							<input type="text" id="new"><br>
+							<input type="text" name="new"><br>
 							<button type="submit">Write</button><br>
 						</label>
 					</form>
@@ -65,19 +67,23 @@
 					</form>
 					<!-- Navbar.js will fill with login forms
 					otherwise stay empty -->
-					<form id="login" action="/log_in" method="POST">
+					<form id="login" action="/login" method="POST">
 
 					</form>
-					<form id="sing-up" action="/join_up" methods="POST">
+					<form id="sing-up" action="/join" methods="POST">
 
 					</form>
+					<span id="search-embed">
+					</span>
 					<span id="like"></span>
 					<div>{% block right %} {% endblock %}</div></span>
 			</div>
     </body>
 	<footer id="foot">
 		<!-- if the user is logged in - so js doesn't complain -->
-		{% if session['login'] != False %} <span id="joiner"></span> {% endif %}
+		{% if session['login'] != False %} 
+			<span id="joiner"></span> 
+		{% endif %}
 		<script src="/static/js/navbar.js"></script>
 		{% block foot %}
 		

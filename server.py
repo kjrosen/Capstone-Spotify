@@ -16,10 +16,12 @@ ADMIN = model.User.query.get(1)
 
 @app.route('/')
 def homepage():
+
     return render_template('home.html')
 
 
-@app.route('/log_in', methods=['POST'])
+
+@app.route('/login', methods=['POST'])
 def sign_in():
     '''logs the user in or redirects'''
 
@@ -37,7 +39,7 @@ def sign_in():
         session['login'] = user_id
         return redirect('/')
 
-@app.route('/join_up', methods=['POST'])
+@app.route('/join', methods=['POST'])
 def sign_up():
     '''checks user email and creates an account'''
 
@@ -63,7 +65,7 @@ def logout():
 
 
 
-@app.route('/make')
+@app.route('/make', methods=['POST'])
 def make_playlsit():
     '''search through the database to fill out the playlist'''
 
@@ -75,12 +77,14 @@ def make_playlsit():
 
     
     playlist = crud.make_playlist(name, author)
+    embed = f'https://open.spotify.com/embed/playlist/{playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
 
-    return render_template('/new_playlist')
+    return render_template('/show-playlist.html',
+                            uri=embed)
 
 
 
-@app.route('/search')
+@app.route('/search.json')
 def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
 
@@ -89,9 +93,9 @@ def search_playlists():
 
     return jsonify(result)
 
-@app.route('/my_playlists')
+@app.route('/mine')
 def show_user_playlists():
-    return render_template('my_playlists.html')
+    return render_template('my-playlists.html')
 
 
 
