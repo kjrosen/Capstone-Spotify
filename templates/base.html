@@ -17,11 +17,6 @@
 			</div>
 
 			<div id="navbar">
-				
-				<!-- TODO: Add a JS link here to make the navbar interactive -->
-				
-				<span id="maker">New Playlist</span>
-				<span id="searcher">Search</span>
 
 				<!-- links to /my_playlists -->
 				{% if session['login'] != False %}
@@ -45,22 +40,31 @@
 						{% endfor %}
 						</ul>
 					</div>
-					<form id="pop-bars">
-						
+					<form id="make">
+						<label>
+							<input type="text" id="new"><br>
+							<button type="submit">Write</button><br>
+						</label>
 					</form>
-					<form id="login">
+					<br>
+					<form id="search">
+						<label>
+							<input type="text" id="query"><br>
+							<button type="submit">Search</button><br>
+						</label>
+					</form>
+					<form id="login" action="/log_in" method="POST">
 
 					</form>
-					<form id="sing-up">
+					<form id="sing-up" action="/join_up" methods="POST">
 
 					</form>
 					<div>{% block right %} {% endblock %}</div></span>
 			</div>
     </body>
-	<footer>
-		<span id="joiner"></span>
+	<footer id="foot">
+		{% if session['login'] != False %} <span id="joiner"></span> {% endif %}
 		<script src="/static/js/navbar.js"></script>
-		<script src="/static/js/db_requests.js"></script>
 		{% block foot %}
 		
 		{% endblock %}

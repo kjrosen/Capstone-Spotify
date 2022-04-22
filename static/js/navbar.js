@@ -3,30 +3,7 @@
 // For each element in the navbar that's not a link
 // set an event listener
 
-const maker = document.getElementById('maker')
-const searcher = document.getElementById('searcher')
 const joiner = document.getElementById('joiner')
-
-const box = document.getElementById('pop-bars');
-const out = '<br></input></label>';
-
-// item 1 - the playlist maker
-maker.addEventListener('click', (evt) => {
-
-    let label_in = '<label><input type="text" id="make">';
-    let button='<br><button type="submit">Write</button>';
-    
-    box.innerHTML = label_in+button+out;
-});
-
-// item 2 - the searcher
-searcher.addEventListener('click', (evt) => {
-
-    let label_in = '<label><input type="text" id="search">';
-    let button='<br><button type="submit">Search</button>';
-
-    box.innerHTML = label_in+button+out;
-})
 
 
 // (conditional on session info) item 3: log in/sign up
@@ -47,7 +24,25 @@ joiner.addEventListener('click', (evt) => {
     loginBox.innerHTML = email+pw+logbutt
     signUpBox.innerHTML = name+email+pw+signbutt
 });
+
+const searchBox = document.getElementById('search');
    
+searchBox.addEventListener('submit', evt => {
+    evt.preventDefault();
+
+    const query = {query: document.getElementById('query').value};
+    const queryString = new URLSearchParams(query).toString();
+    
+    fetch(`/search?${queryString}`)
+        .then(results => results.json())
+        .then(resJson => {
+            const box = document.getElementById('left-block')
+            box.insertAdjacentHTML('afterbegin', resJson)
+        });
+
+});
+
+
 
     
 

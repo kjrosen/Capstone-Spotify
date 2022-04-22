@@ -244,13 +244,17 @@ def search_db(query):
     WHERE t.title LIKE '%keyword%' OR t.artist LIKE '%keyword%'
     '''
 
-    play_q = db.session.query(Playlist.name)
+    play_q = db.session.query(Playlist)
     join_feat = play_q.join(Feat, Playlist.play_id==Feat.play_id)
     play_feat_track = join_feat.join(Track, Track.track_id==Feat.track_id)
+    where = play_feat_track.filter((Track.title.like(f'{query}%')) | (Track.artist.like(f'{query}%')))
     
-    results = play_feat_track.filter((Track.title.like(f'{query}%')) | (Track.artist.like(f'{query}%')))
+    results = where.all()
+    final = []
+    for item in results:
+        final += [item.play_id, item.name, item.creator_id]
 
-    return results.all()
+    return final
 
 
 if __name__ == '__main__':

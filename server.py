@@ -80,11 +80,9 @@ def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
 
     query = request.args.get('query')
-    print("*"*30)
-    print(query)
-    print("*"*40)
+    result = crud.search_db(query)
 
-    return jsonify(crud.search_by_keywords(query))
+    return jsonify(result)
 
 
 @app.route('/my_playlists')
