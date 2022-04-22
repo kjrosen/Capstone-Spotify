@@ -3,11 +3,14 @@
 {% block head %}Show one specific piece of nonense{% endblock %} 
 
 {% block left %} 
-<iframe style="border-radius:12px" src={{ uri }}></iframe>
-
+<span>
+    <iframe style="border-radius:12px" src={{ embed }} width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+</span>
 {% endblock %}
 
 {% block right %}
-
+<form action="/like" method="POST">
+    <button name="like" value={{ playlist }}>Like</button>
+</form>
 
 {% endblock %} 

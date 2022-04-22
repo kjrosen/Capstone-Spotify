@@ -80,9 +80,8 @@ def make_playlsit():
     embed = f'https://open.spotify.com/embed/playlist/{playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
 
     return render_template('/show-playlist.html',
-                            uri=embed)
-
-
+                            embed=embed,
+                            playlist=playlist)
 
 @app.route('/search.json')
 def search_playlists():
@@ -92,6 +91,21 @@ def search_playlists():
     result = crud.search_db(query)
 
     return jsonify(result)
+
+
+
+@app.route('/like', methods=['POST'])
+def like_play():
+    '''adds a like between the current user
+    and the current playlist'''
+
+    playlist = request.form.get('like')
+
+    # check = crud.make_like(session['login'])
+
+    return redirect('/')
+
+
 
 @app.route('/mine')
 def show_user_playlists():

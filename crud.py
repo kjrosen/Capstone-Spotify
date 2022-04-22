@@ -268,6 +268,16 @@ def search_db(query):
     return final
 
 
+def make_like(playlist_id, user_id):
+    '''checks that the user didn't author the playlist
+    checks that the user hasn't already liked the playlist
+    checks that the user is logged in
+    
+    if all pass creates a like instance
+    return success message
+    or specific failure message
+    '''
+
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)
