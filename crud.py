@@ -2,6 +2,7 @@
 
 from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
 from random import choice
+import search_helpers
 
 ## imported to crud from server on 4/19
 import os
@@ -131,22 +132,12 @@ def make_account(email, password, name):
 ## functions for creating playlists from user input phrases
 ## TODO: tighten up the search with searcher-helper functions
 
-def search_tracks_by_title(text):
-    '''search for songs from db for each phrase in a text'''
+def search_tracks_by_title(queries):
+    '''search for songs from db for the given set of search parameters phrase in a text'''
 
-    upper = text.upper()
-    title = text.title()
-    lower = text.lower()
-    options = [upper, title, lower]
-    '''replace with the make_search_options from new file'''
+    search = Track.query.filter(Track.title.in_(queries)).all()
 
-    finds = [text, []]
-    for opt in options:
-        search = Track.query.filter(Track.title.like(f'{opt} %')).all()
-        for item in search:
-            finds[1].append(item)
-
-    return finds
+    return search
 
 def search_api(word, offset=0):
     '''performs an api search for the given phrase'''
@@ -169,40 +160,29 @@ def make_track(results):
     db.session.add_all(new)
     db.session.commit()
 
-def find_songs_for_play(phrase):
+def find_songs_for_play(query):
     '''searches through db, api, on repeat until tracks all found'''
-    
-    text = phrase.split()
 
-    '''impliment the make_search_options function once it's completed'''
-    search = []
-    for word in text:
-        search.append(search_tracks_by_title(word))
+    search = search_tracks_by_title(query)
 
-    for result in search:
+    q_num = 0
+    while len(search) == 0:
+        new_search = search_api(query[0], q_num)
+        make_track(new_search)
+        search = search_tracks_by_title(query)
+        q_num += 1
 
-        queries = 0
-        while len(result[1]) == 0:
-            new_search = search_api(result[0], queries)
-            queries += 1
-            make_track(new_search)
-
-            result[1] = search_tracks_by_title(result[0])[1]
-
-            if queries > 10:
-                break
+        if q_num > 10:
+            break
 
     return search
 
-def pick_songs(playlists):
+def pick_songs(search_results):
     '''pick a random option from the results to pick for playlist'''
 
-    picks = []
-    for keyword in playlists:
-        if len(keyword[1]) > 0:
-            picks.append(choice(keyword[1]))
+    if len(search_results) > 0:
+        return choice(search_results)
 
-    return picks
 
 def make_playlist(phrase, author):
     '''takes in a given phrase and makes a spotify playlist full of songs
@@ -212,23 +192,35 @@ def make_playlist(phrase, author):
     '''
 
     if author.spot_id == None:
-        new = spot2.user_playlist_create(app_id, phrase)
+        id_ = app_id
     else:
-        new = spot2.user_playlist_create(author.spot_id, phrase)
+        id_ = author.spot_id
 
-    options = find_songs_for_play(phrase)
-    final = pick_songs(options)
-
-    ids = []
-    for song in final:
-        ids.append(song.track_id)
-
-    spot.playlist_add_items(new['id'], ids)
-
+    new = spot2.user_playlist_create(id_, phrase)
     playlist = create_playlist(new['id'], phrase, author.user_id)
+
+    query_dict = search_helpers.make_search_options(phrase)
+    
+    tracks = []
+    for query in query_dict:
+        songs_opts = find_songs_for_play(query_dict[query])
+        song_pick = pick_songs(songs_opts)
+
+        #TODO: 
+        '''
+        do something here to check the length of the track title.
+        
+        if a word can only be incorporated by ngram than the neighbors within that ngram
+        don't need their own tracks'''
+        
+        if song_pick != None:
+            tracks.append(song_pick)
+
+
     play_fs = [playlist]
-    for song in final:
-        feat = create_feat(song.track_id, playlist.play_id)
+    for track in tracks:
+        spot.playlist_add_items(new['id'], [track.track_id])
+        feat = create_feat(track.track_id, playlist.play_id)
         play_fs.append(feat)
 
     db.session.add_all(play_fs)
@@ -256,15 +248,14 @@ def search_db(query):
     
     results = where.all()
     final = []
-    print("$"*100)
-    print(results)
+
     if len(results) > 0:
         for item in results:
             author = User.query.get(item.creator_id)
             final.append([item.play_id, item.name, author.name])
     else:
         final.append(["None", "No results", "Community"])
-    print(final)
+
     return final
 
 
