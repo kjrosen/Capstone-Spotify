@@ -190,13 +190,15 @@ def make_playlist(phrase, author):
 
     returns the playlist id
     '''
+  
+    ## cannot give spotify ownership to users - TODO:
+    ## figure out how to give it to them
+    # if author.spot_id == None:
+    #     id_ = app_id
+    # else:
+    #     id_ = author.spot_id
 
-    if author.spot_id == None:
-        id_ = app_id
-    else:
-        id_ = author.spot_id
-
-    new = spot2.user_playlist_create(id_, phrase)
+    new = spot2.user_playlist_create(app_id, phrase)
     playlist = create_playlist(new['id'], phrase, author.user_id)
 
     query_dict = search_helpers.make_search_options(phrase)
@@ -259,7 +261,7 @@ def search_db(query):
     return final
 
 
-def make_like(playlist_id, user_id):
+def make_like(user_id, playlist_id):
     '''checks that the user didn't author the playlist
     checks that the user hasn't already liked the playlist
     checks that the user is logged in
@@ -268,6 +270,23 @@ def make_like(playlist_id, user_id):
     return success message
     or specific failure message
     '''
+    playlist = Playlist.query.get(playlist_id)
+
+    if user_id == False:
+        return("You need to be logged in to like")
+    else:
+        if playlist.creator_id == user_id:
+            return "You made this playlist"
+        else:
+            if Likes.query.get(str(user_id)+playlist_id):
+                return "You already liked this"
+            else:
+                like = create_like(user_id, playlist_id)
+                db.session.add(like)
+                playlist.hype += 1
+                db.session.commit()
+                return "Liked!"
+
 
 if __name__ == '__main__':
     from server import app

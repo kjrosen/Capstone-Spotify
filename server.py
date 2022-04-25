@@ -70,6 +70,7 @@ def make_playlsit():
     '''search through the database to fill out the playlist'''
 
     name = request.form.get('new')
+
     if session['login'] == False:
         author = ADMIN
     else:
@@ -99,11 +100,12 @@ def like_play():
     '''adds a like between the current user
     and the current playlist'''
 
-    playlist = request.form.get('like')
+    playlist_id = request.json.get('playlist_id')
 
-    # check = crud.make_like(session['login'])
+    response = crud.make_like(session['login'], playlist_id)
+    
+    return response
 
-    return redirect('/')
 
 
 

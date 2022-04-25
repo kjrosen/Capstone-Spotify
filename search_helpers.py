@@ -27,7 +27,7 @@ def adds_punctuation(word):
     '''takes in a word and returns a list of that word
     but with different puncuation at the end'''
 
-    return [word+".", word+"!", word+"?", word+","]
+    return [word+".", word+"!", word+"?", word+",", word+"..."]
 
 def make_ngrams(words):
     '''takes in a list of strings and returns a dictionary of lists
@@ -78,3 +78,13 @@ def make_search_options(phrase):
     return word_dict
 
 
+'''add two more search options to be called as last resort
+
+first search 
+.liked(f"{word} (%") or .like(f"f{word} feat%") to find songtitles that are that word
+plus parenthesis or a featured artist 
+
+second search
+collection of songs that spell out the word (a, b, c, etc)
+
+have letter matches for every letter but c, l, p (use see, elle, pea)'''

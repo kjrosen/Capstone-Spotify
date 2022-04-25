@@ -51,9 +51,35 @@ searchBox.addEventListener('submit', (evt) => {
 			for (const play of plays) {
 				play.addEventListener('click', (evt) => {
 					const playlist = evt.target.id;
-					searchBox.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+					const embed = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+					const ender = '<button>Like</button>'
+
+					searchBox.innerHTML = embed+ender
+
+					// set a nested event listner to like each playlist
+					const like = document.querySelector('#search-embed button');
+
+					like.addEventListener('click', (evt) => {
+						evt.preventDefault();
+
+						const play = {playlist_id: playlist};
+
+						fetch('/like', {
+							method: 'POST',
+							body: JSON.stringify(play),
+							headers: {
+								'Content-Type': 'application/json',
+							},
+						})
+							.then(response => response.text())
+							.then(response_ => {
+								alert(response_);
+							});
+					});
+				
 				});
 			}
+
 		});
 });
 
