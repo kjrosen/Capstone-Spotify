@@ -130,7 +130,8 @@ def make_account(email, password, name):
 
 
 ## functions for creating playlists from user input phrases
-## TODO: tighten up the search with searcher-helper functions
+## TODO: add a last ditch search to spell out unfindable words
+## TODO: if a multi-word song is chosen take out the other songs in title
 
 def search_tracks_by_title(queries):
     '''search for songs from db for the given set of search parameters phrase in a text'''
@@ -231,9 +232,8 @@ def make_playlist(phrase, author):
     return playlist.play_id
 
 
-# function for searching through the db for playlists featuring keywords
-# looks through track title and artists
-
+## function for searching through the db for playlists featuring keywords
+## looks through track title and artists
 def search_db(query):
     '''searches through playlist db for query keywords
 
@@ -260,7 +260,9 @@ def search_db(query):
 
     return final
 
-
+## function for letting users like a playlist
+## checks that they're logged in, not the author, and haven't liked it already
+## also adds hype to playlist
 def make_like(user_id, playlist_id):
     '''checks that the user didn't author the playlist
     checks that the user hasn't already liked the playlist
@@ -287,6 +289,24 @@ def make_like(user_id, playlist_id):
                 db.session.commit()
                 return "Liked!"
 
+## finds signed in users created and liked playlists for display
+def show_plays(user_id):
+    '''creates a dictionary of likes and creations
+    for a given user'''
+
+    playlists = {}
+    playlists['created'] = Playlist.query.filter(Playlist.creator_id==user_id).all()
+    playlists['liked'] = db.session.query(Playlist).join(Likes, Playlist.play_id==Likes.play_id).filter(Likes.user_id==user_id).all()
+
+    show = {'created': [], 'liked': []}
+    for playlist in playlists['created']:
+        show['created'].append([playlist.play_id, playlist.name])
+
+    for playlist in playlists['liked']:
+        author = User.query.get(playlist.creator_id)
+        show['liked'].append([playlist.play_id, playlist.name, author.name])
+
+    return show
 
 if __name__ == '__main__':
     from server import app

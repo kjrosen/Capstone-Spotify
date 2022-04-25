@@ -3,8 +3,18 @@
 {% block head %}All my nonsense{% endblock %} 
 
 {% block left %} 
-
-
+<h1>Authored playlists</h1>
+<ul>
+    {% for play in created %}
+        <li id={{ play[0] }}>{{ play[1] }}</li>
+    {% endfor %} 
+</ul>
+<h1>Liked playlists</h1>
+<ul>
+    {% for play in liked %} 
+        <li id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
+    {% endfor %}
+</ul>
 {% endblock %}
 
 {% block right %}

@@ -98,7 +98,7 @@ def search_playlists():
 @app.route('/like', methods=['POST'])
 def like_play():
     '''adds a like between the current user
-    and the current playlist'''
+    and the current playlist, and up the playlists' hype'''
 
     playlist_id = request.json.get('playlist_id')
 
@@ -108,30 +108,21 @@ def like_play():
 
 
 
-
 @app.route('/mine')
 def show_user_playlists():
-    return render_template('my-playlists.html')
+    '''fetches the user's liked and created playlists
+    sends them to fill the my-playlists page'''
 
+    user_id = session['login']
+    playlists = crud.show_plays(user_id)
+    print(playlists)
+    print(playlists['liked'])
+    print(playlists['created'])
+    
+    return render_template('my-playlists.html',
+                            liked=playlists['liked'],
+                            created=playlists['created'])
 
-
-# @app.route('/new_playlist')
-# def new_playlist():
-#     '''this will eventually not render to a new page
-#     ideally will be handled by REACT'''
-#     return render_template('new_playlist.html')
-
-# @app.route('/search')
-# def search():
-#     '''this will eventually not render to a new page
-#     ideally will be handled by REACT'''
-#     return render_template('search.html')
-
-# @app.route('/join')
-# def show_sign_in():
-#     '''this will eventually not render to a new page
-#     ideally will be handled by REACT'''
-#     return render_template('join.html')
 
 
 
