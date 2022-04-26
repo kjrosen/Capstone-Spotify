@@ -20,6 +20,9 @@
 
 			<div id="navbar">
 
+				<span id="maker">New</span>
+				<span id="searcher">Search</span>
+
 				<!-- Check session data to show either
 				A - link to my playlists and logout indicator -->
 				{% if session['login'] != False %}
@@ -50,30 +53,25 @@
 					<!-- Uses Navbar.js events to send fetch request
 					Generates an embedded Spotify playlist in Left 
 					Create a like button on Right-->
-					<form id="make" action="/make" method="POST">
-						<label>
-							<input type="text" name="new"><br>
-							<button type="submit">Write</button><br>
-						</label>
+					<form id="make">
+						
 					</form>
-					<br>
 					<!-- Uses Navbar.js events to send fetch request
 					Generates list of playlists-->
 					<form id="search">
-						<label>
-							<input type="text" id="query"><br>
-							<button type="submit">Search</button><br>
-						</label>
+						
 					</form>
 					<!-- Navbar.js will fill with login forms
 					otherwise stay empty -->
 					<form id="login" action="/login" method="POST">
 
 					</form>
-					<form id="sing-up" action="/join" methods="POST">
+					<form id="join" action="/sign-up" method="POST">
 
 					</form>
-					<span id="search-embed"></span>
+					<span id="search-embed">
+
+					</span>
 					<div>{% block right %} {% endblock %}</div>
 			</div>
     </body>

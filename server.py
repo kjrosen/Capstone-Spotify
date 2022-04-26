@@ -65,11 +65,11 @@ def logout():
 
 
 
-@app.route('/make', methods=['POST'])
+@app.route('/make.json', methods=['POST'])
 def make_playlsit():
     '''search through the database to fill out the playlist'''
 
-    name = request.form.get('new')
+    name = request.json.get('input')
 
     if session['login'] == False:
         author = ADMIN
@@ -78,11 +78,8 @@ def make_playlsit():
 
     
     playlist = crud.make_playlist(name, author)
-    embed = f'https://open.spotify.com/embed/playlist/{playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
 
-    return render_template('/show-playlist.html',
-                            embed=embed,
-                            playlist=playlist)
+    return playlist
 
 @app.route('/search.json')
 def search_playlists():
@@ -115,9 +112,6 @@ def show_user_playlists():
 
     user_id = session['login']
     playlists = crud.show_plays(user_id)
-    print(playlists)
-    print(playlists['liked'])
-    print(playlists['created'])
     
     return render_template('my-playlists.html',
                             liked=playlists['liked'],
