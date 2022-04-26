@@ -20,17 +20,16 @@ maker.addEventListener('click', (evt) => {
 	makeBox.innerHTML = makeInput+makeButt
 
 	//on submit create a new event to make the playlist
-	const makeSubmit = document.querySelector('#make button');
 	//takes in put from the bar
 	//goes to /make and fetches a playlist
-	makeSubmit.addEventListener('submit', (eve) => {
+	makeBox.addEventListener('submit', (evt) => {
 		evt.preventDefault();
-		const input = {input: document.getElementById('new').value};
-		const inputString = new URLSearchParams(input).toString();
 
-		fetch(`/make.json?${inputString}`, {
+		const input = {new: document.getElementById('new').value};
+
+		fetch(`/make.json?${input}`, {
 			method: 'POST',
-			body: JSON.stringify(inputString),
+			body: JSON.stringify(input),
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -44,6 +43,7 @@ maker.addEventListener('click', (evt) => {
 	});
 });
 
+
 // on click a search bar appears in the right bar
 searcher.addEventListener('click', (evt) => {
 	const searchBox = document.getElementById('search');
@@ -54,10 +54,8 @@ searcher.addEventListener('click', (evt) => {
 	searchBox.innerHTML = searchInput+searchButt
 
 	// on submit create new event
-	// takes input from search bar and sends a fetch request
-	const seaSubmit = document.querySelector('#search button');
 	// goes to /search and returns list of playlists 
-	seaSubmit.addEventListener('submit', (evt) => {
+	searchBox.addEventListener('submit', (evt) => {
 		evt.preventDefault();
 
 		const query = {query: document.getElementById('query').value};
@@ -74,6 +72,7 @@ searcher.addEventListener('click', (evt) => {
 					box.insertAdjacentHTML('beforeend', `<li id="${item[0]}">${item[1]} by ${item[2]}</li>`);
 				}
 
+
 				// set a nested event listener to make each playlist linkable
 				// clicking pulls up full playlist
 				const plays = document.querySelectorAll('#left-block li');
@@ -86,6 +85,7 @@ searcher.addEventListener('click', (evt) => {
 						const ender = '<button>Like</button>'
 
 						searchBox.innerHTML = embed+ender
+
 
 						// set a nested event listner to like each playlist
 						// TODO: adjust the way likes are alerted
@@ -114,8 +114,6 @@ searcher.addEventListener('click', (evt) => {
 	});
 });
 
-
-// reacts to search bar in base navbar
 
 // on click the input bars appear in Rigt block
 //submit goes to either /log_in or /join_up depd on button

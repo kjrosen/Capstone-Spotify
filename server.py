@@ -17,6 +17,8 @@ ADMIN = model.User.query.get(1)
 @app.route('/')
 def homepage():
 
+    session['login'] = session.get('login', False)
+    
     return render_template('home.html')
 
 
@@ -69,7 +71,7 @@ def logout():
 def make_playlsit():
     '''search through the database to fill out the playlist'''
 
-    name = request.json.get('input')
+    name = request.json.get('new')
 
     if session['login'] == False:
         author = ADMIN
