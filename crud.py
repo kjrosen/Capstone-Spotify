@@ -246,7 +246,10 @@ def search_db(query):
     play_q = db.session.query(Playlist)
     join_feat = play_q.join(Feat, Playlist.play_id==Feat.play_id)
     play_feat_track = join_feat.join(Track, Track.track_id==Feat.track_id)
-    where = play_feat_track.filter((Track.title.like(f'{query}%')) | (Track.artist.like(f'{query}%')))
+    where = play_feat_track.filter(
+        (Track.title.like(f'%{query}%')) | (Track.artist.like(f'%{query}%')) | (Track.title.like(f'%{query.lower()}%'))
+        | (Track.artist.like(f'%{query.lower()}%')) | (Track.title.like(f'%{query.title()}%')) | 
+        (Track.artist.like(f'%{query.title()}%')))
     
     results = where.all()
     final = []
@@ -259,6 +262,15 @@ def search_db(query):
         final.append(["None", "No results", "Community"])
 
     return final
+
+def top5_plays():
+    playlists = db.session.query(Playlist).order_by('hype').all()
+
+    top5 = []
+    for play in playlists:
+        top5.append([play.play_id, play.name, play.author.name, play.hype])
+
+    return top5[-1:-6:-1]
 
 ## function for letting users like a playlist
 ## checks that they're logged in, not the author, and haven't liked it already

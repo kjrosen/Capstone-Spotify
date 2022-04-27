@@ -3,26 +3,35 @@
 
 // sets event listeners for the constances of the navbar
 // item 1/ playlist maker
-const maker = document.getElementById('maker')
+const maker = document.getElementById('maker');
 // item 2/ playlist searcher
-const searcher = document.getElementById('searcher')
+const searcher = document.getElementById('searcher');
 // reacting to the optional Join navbar item
-const joiner = document.getElementById('joiner')
+const joiner = document.getElementById('joiner');
+// all forms render to right box
+const formBox = document.getElementById('form-box');
+// except for login forms those are special snowflakes
+const loginBox = document.getElementById('login')
+const joinBox = document.getElementById('join')
+// all lists render to left box
+const listBox = document.getElementById('left-block');
+// all playlists render to right box
+const embedBox = document.getElementById('embed-box');
 
 
 // on click a make bar appears in the right bar
 maker.addEventListener('click', (evt) => {
-	const makeBox = document.getElementById('make');
 	
 	let makeInput = '<input type="text" id="new"><br>'
 	let makeButt = '<button type="submit">Write</button><br>'
 	
-	makeBox.innerHTML = makeInput+makeButt
-
+	formBox.innerHTML = makeInput+makeButt;
+	loginBox.innerHTML = '';
+	joinBox.innerHTML = '';
 	//on submit create a new event to make the playlist
-	//takes in put from the bar
 	//goes to /make and fetches a playlist
-	makeBox.addEventListener('submit', (evt) => {
+	//renders to leftbox
+	formBox.addEventListener('submit', (evt) => {
 		evt.preventDefault();
 
 		const input = {new: document.getElementById('new').value};
@@ -36,9 +45,7 @@ maker.addEventListener('click', (evt) => {
 		})
 			.then(playJson => playJson.text())
 			.then(playlistID => {
-				const newPlayBox = document.getElementById('left-block');
-
-				newPlayBox.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlistID}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+				listBox.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlistID}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
 			});
 	});
 });
@@ -46,16 +53,16 @@ maker.addEventListener('click', (evt) => {
 
 // on click a search bar appears in the right bar
 searcher.addEventListener('click', (evt) => {
-	const searchBox = document.getElementById('search');
 	
 	let searchInput = '<input type="text" id="query"><br>'
 	let searchButt = '<button type="submit">Search</button><br>'
 	
-	searchBox.innerHTML = searchInput+searchButt
-
+	formBox.innerHTML = searchInput+searchButt
+	loginBox.innerHTML = '';
+	joinBox.innerHTML = '';
 	// on submit create new event
 	// goes to /search and returns list of playlists 
-	searchBox.addEventListener('submit', (evt) => {
+	formBox.addEventListener('submit', (evt) => {
 		evt.preventDefault();
 
 		const query = {query: document.getElementById('query').value};
@@ -65,43 +72,35 @@ searcher.addEventListener('click', (evt) => {
 			.then(results => results.json())
 			.then(resLists => {
 
-				const box = document.getElementById('left-block');
-
-				box.innerHTML = ''
+				listBox.innerHTML = ''
 				for (const item of resLists) {
-					box.insertAdjacentHTML('beforeend', `<li id="${item[0]}">${item[1]} by ${item[2]}</li>`);
+					listBox.insertAdjacentHTML('beforeend', `<li id="${item[0]}">${item[1]} by ${item[2]}</li>`);
 				}
 
-
-				// set a nested event listener to make each playlist linkable
-				// clicking pulls up full playlist
+				// search results and also the most popular all populate in left block
 				const plays = document.querySelectorAll('#left-block li');
-				const searchBox = document.getElementById('search-embed');
 
 				for (const play of plays) {
 					play.addEventListener('click', (evt) => {
-						const playlist = evt.target.id;
-						const embed = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
-						const ender = '<button>Like</button>'
+					const playlist = evt.target.id;
 
-						searchBox.innerHTML = embed+ender
+					const embed = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+					const likeButt = '<button>Like</button>'
 
+					embedBox.innerHTML = embed+likeButt
 
-						// set a nested event listner to like each playlist
-						// TODO: adjust the way likes are alerted
-						const like = document.querySelector('#search-embed button');
-
-						like.addEventListener('click', (evt) => {
-							evt.preventDefault();
-
-							const play = {playlist_id: playlist};
-
-							fetch('/like', {
-								method: 'POST',
-								body: JSON.stringify(play),
-								headers: {
-									'Content-Type': 'application/json',
-								},
+					// when playlists render to the embed box
+					// they become likable
+					const like = document.querySelector('#embed-box button')
+					like.addEventListener('click', (evt) => {
+						evt.preventDefault();
+			
+						const play = {playlist_id: playlist};
+						fetch('/like', {
+							method: 'POST',
+							body: JSON.stringify(play),
+							headers: {
+								'Content-Type': 'application/json'},
 							})
 								.then(response => response.text())
 								.then(response_ => {
@@ -115,22 +114,56 @@ searcher.addEventListener('click', (evt) => {
 });
 
 
+
 // on click the input bars appear in Rigt block
 //submit goes to either /log_in or /join_up depd on button
 joiner.addEventListener('click', (evt) => {
 	// TODO: 
 	// Passwords are being taken insecurily apparnetly
 
-	const loginBox = document.getElementById('login');
-	const signUpBox = document.getElementById('join');
+	const email = '<label>Email: <input type="text" name="email" /></label><br />'
+	const pw = '<label>Password: <input type="password" name="password" /></label><br />'
+	const name = '<label>Username: <input type="text" name="name" /></label><br />'
+	const logbutt = '<button type="submit">Log In</button><br/>'
+	const signbutt = '<button type="submit">Sign Up</button>'
 
-	let email = '<label>Email: <input type="text" name="email" /></label><br />'
-	let pw = '<label>Password: <input type="password" name="password" /></label<br />'
-	let name = '<label>Username: <input type="text" name="name" /></label><br />'
-	let logbutt = '<button type="submit">Log In</button><br/>'
-	let signbutt = '<button type="submit">Sign Up</button>'
 
+	formBox.innerHTML = ''
 	loginBox.innerHTML = email+pw+logbutt;
-	signUpBox.innerHTML = name+email+pw+signbutt;
+	joinBox.innerHTML = name+email+pw+signbutt;
 
 });
+
+
+// search results and also the most popular all populate in left block
+const plays = document.querySelectorAll('#left-block li');
+
+for (const play of plays) {
+	play.addEventListener('click', (evt) => {
+		const playlist = evt.target.id;
+
+		const embed = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/${playlist}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+		const likeButt = '<button>Like</button>'
+
+		embedBox.innerHTML = embed+likeButt
+
+		// when playlists render to the embed box
+		// they become likable
+		const like = document.querySelector('#embed-box button')
+		like.addEventListener('click', (evt) => {
+			evt.preventDefault();
+			
+			const play = {playlist_id: playlist};
+			fetch('/like', {
+				method: 'POST',
+				body: JSON.stringify(play),
+				headers: {
+					'Content-Type': 'application/json'},
+				})
+					.then(response => response.text())
+					.then(response_ => {
+						alert(response_);
+					});
+		});
+	});
+}

@@ -4,6 +4,7 @@ body {
     padding: 0px;
     font-family: Futura, Ubuntu, Karla, monospace;
     width: 100%;
+    background-color:rgb(32, 56, 44);
 }
 
 #header {
@@ -12,6 +13,10 @@ body {
     color:rgb(0, 26, 11);
     text-align: center;
     padding: 2%;
+}
+
+#header a {
+    color:rgb(0, 26, 11);
 }
 
 #header a:visited {
@@ -41,7 +46,6 @@ body {
 
 #result-boxes {
     display: flex;
-    height: 500px;
 }
 
 #left-block {
@@ -64,11 +68,6 @@ body {
     display: block;
     background-color:black;
     color:azure
-}
-
-footer {
-    height: 3em;
-    background-color:rgb(0, 26, 11);
 }
 
 .wait {

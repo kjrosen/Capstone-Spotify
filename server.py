@@ -18,8 +18,9 @@ ADMIN = model.User.query.get(1)
 def homepage():
 
     session['login'] = session.get('login', False)
+    top5 = crud.top5_plays()
     
-    return render_template('home.html')
+    return render_template('home.html', top5=top5)
 
 
 

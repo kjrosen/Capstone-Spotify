@@ -3,13 +3,6 @@
 	<head>
 		<link rel="stylesheet" href="/static/css/style.css">
 		<link rel="icon" type="image/x-icon" href="/static/images/spotibanana.png">
-		<!-- lets me embed spotify playlists on the page -->
-		<!-- <script src="https://open.spotify.com/embed-playlist/iframe-api/v1" async></script> -->
-
-		<!-- The package that makes React work -->
-		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
-		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
 
 		<title>{% block head %}  {% endblock%}</title>
 	</head>
@@ -39,7 +32,9 @@
 
 			<div id="result-boxes">
 				<!-- Left block shows search results -->
-				<span id="left-block"><div>{% block left %} {% endblock %}</div></span>
+				<span id="left-block">
+					<div>{% block left %} {% endblock %}</div>
+				</span>
 				<!-- Right block shows input forms -->
 				<span id="right-block">
 					<div id="flash">
@@ -50,26 +45,21 @@
 						{% endfor %}
 						</ul>
 					</div>
-					<!-- Uses Navbar.js events to send fetch request
-					Generates an embedded Spotify playlist in Left 
-					Create a like button on Right-->
-					<form id="make">
-						
-					</form>
-					<!-- Uses Navbar.js events to send fetch request
-					Generates list of playlists-->
-					<form id="search">
+					<!-- Uses Navbar.js events to populate bar
+					with different input bars
+					or spotify playlists-->
+					<form id="form-box">
 						
 					</form>
 					<!-- Navbar.js will fill with login forms
-					otherwise stay empty -->
+					otherwise stay empty, sent via post-->
 					<form id="login" action="/login" method="POST">
 
 					</form>
-					<form id="join" action="/sign-up" method="POST">
+					<form id="join" action="/join" method="POST">
 
 					</form>
-					<span id="search-embed">
+					<span id="embed-box">
 
 					</span>
 					<div>{% block right %} {% endblock %}</div>
