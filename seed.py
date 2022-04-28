@@ -11,6 +11,8 @@ import json
 ## give the commands to drop and recreate db
 os.system('dropdb music')
 os.system('createdb music')
+# os.system('source secrets.sh')
+# os.system('psql music < data/musicBack.sql')
 
 model.connect_to_db(server.app)
 model.db.create_all()

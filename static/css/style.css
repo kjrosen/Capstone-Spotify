@@ -9,10 +9,10 @@ body {
 
 #header {
     background-color:rgb(71, 161, 71);
-    font-size: 2em;
+    /* font-size: 1em; */
     color:rgb(0, 26, 11);
     text-align: center;
-    padding: 2%;
+    padding: 1em;
 }
 
 #header a {

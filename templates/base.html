@@ -8,7 +8,7 @@
 	</head>
     <body>
 			<div id="header">
-				<a href="/">Playlist Maker</a>
+				<h1>Playlist Maker</h1>
 			</div>
 
 			<div id="navbar">
@@ -33,36 +33,29 @@
 			<div id="result-boxes">
 				<!-- Left block shows search results -->
 				<span id="left-block">
-					<div>{% block left %} {% endblock %}</div>
+					<div id="left-top">{% block leftTop %} {% endblock %}</div>
+					<div id="left-low">{% block leftLow %} {% endblock %}</div>
 				</span>
 				<!-- Right block shows input forms -->
 				<span id="right-block">
-					<div id="flash">
+					<span id="flash">
 						<ul>
 							<!-- Flash any messages (login info) -->
 						{% for message in get_flashed_messages() %}
 						  <li>{{ message }}</li>
 						{% endfor %}
 						</ul>
-					</div>
+					</span>
 					<!-- Uses Navbar.js events to populate bar
-					with different input bars
-					or spotify playlists-->
-					<form id="form-box">
+					with different input bars -->
+					<span id="form-box">
 						
-					</form>
-					<!-- Navbar.js will fill with login forms
-					otherwise stay empty, sent via post-->
-					<form id="login" action="/login" method="POST">
-
-					</form>
-					<form id="join" action="/join" method="POST">
-
-					</form>
+					</span>
+					<!-- or spotify playlists-->
 					<span id="embed-box">
 
 					</span>
-					<div>{% block right %} {% endblock %}</div>
+				</span>
 			</div>
     </body>
 	<footer id="foot">

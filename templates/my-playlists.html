@@ -2,13 +2,15 @@
 
 {% block head %}All my nonsense{% endblock %} 
 
-{% block left %} 
+{% block leftTop %} 
 <h1>Authored playlists</h1>
 <ul>
     {% for play in created %}
         <li id={{ play[0] }}>{{ play[1] }}</li>
     {% endfor %} 
 </ul>
+{% endblock %}
+{% block leftLow %}
 <h1>Liked playlists</h1>
 <ul>
     {% for play in liked %} 
@@ -16,10 +18,6 @@
     {% endfor %}
 </ul>
 {% endblock %}
-
-{% block right %}
-
-{% endblock %} 
 
 {% block foot %} 
     
