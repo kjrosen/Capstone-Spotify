@@ -42,6 +42,7 @@ def sign_in():
         session['login'] = user_id
         return redirect('/')
 
+
 @app.route('/join', methods=['POST'])
 def sign_up():
     '''checks user email and creates an account'''
@@ -59,12 +60,45 @@ def sign_up():
         session['login'] = user_id
         return redirect('/')
         
+
 @app.route('/logout')
 def logout():
     '''logs a user out'''
     session['login'] = False
 
     return redirect('/')        
+
+
+@app.route('/verify', methods=['POST'])
+def check_user():
+    '''checks that the users' information is accurate before changing info'''
+    
+    ##gets email and password from from
+    in_pass = request.json.get('pw')
+
+    ##log in checks database information
+    user = model.User.query.get(session['login'])
+
+    if user.pw == in_pass:
+        return 'true'
+
+
+@app.route('/update', methods=['POST'])
+def update_user_info():
+    '''updates the user's name or password
+    emails cannot be updated'''
+
+
+    new_pw = request.json.get('pw')
+    new_name = request.json.get('name')
+
+    user = model.User.query.get(session['login'])
+
+    user.pw = new_pw
+    user.name = new_name
+    model.db.session.commit()
+
+    return 'Information updated'
 
 
 
@@ -84,6 +118,7 @@ def make_playlsit():
 
     return playlist
 
+
 @app.route('/search.json')
 def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
@@ -92,7 +127,6 @@ def search_playlists():
     result = crud.search_db(query)
 
     return jsonify(result)
-
 
 
 @app.route('/like', methods=['POST'])
@@ -107,7 +141,6 @@ def like_play():
     return response
 
 
-
 @app.route('/mine')
 def show_user_playlists():
     '''fetches the user's liked and created playlists
@@ -118,9 +151,8 @@ def show_user_playlists():
     
     return render_template('my-playlists.html',
                             liked=playlists['liked'],
-                            created=playlists['created'])
-
-
+                            created=playlists['created'],
+                            user_name=model.User.query.get(user_id).name)
 
 
 if __name__ == "__main__":

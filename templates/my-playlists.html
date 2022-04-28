@@ -3,7 +3,8 @@
 {% block head %}All my nonsense{% endblock %} 
 
 {% block leftTop %} 
-<h1>Authored playlists</h1>
+<h1>Hi {{ user_name }}</h1>
+<h2>authored playlists</h2>
 <ul>
     {% for play in created %}
         <li id={{ play[0] }}>{{ play[1] }}</li>
@@ -11,7 +12,7 @@
 </ul>
 {% endblock %}
 {% block leftLow %}
-<h1>Liked playlists</h1>
+<h2>Liked playlists</h2>
 <ul>
     {% for play in liked %} 
         <li id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
@@ -20,5 +21,5 @@
 {% endblock %}
 
 {% block foot %} 
-    
+    <span id="adjuster">account details</span>
 {% endblock %}
