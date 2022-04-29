@@ -140,6 +140,22 @@ def search_tracks_by_title(queries):
 
     return search
 
+def search_tracks_with_multi_artists(queries):
+    '''search for songs that allow for featured artist'''
+
+    search = []
+
+    for query in queries:
+        search += Track.query.filter(
+            (Track.title.like(f'{query} (feat.%')) | 
+            (Track.title.like(f'{query} (with%)')) | 
+            (Track.title.like(f'{query} (Featuring%')) |
+            (Track.title.like(f'{query} (Feat.%')) |
+            (Track.title.like(f'{query} (With%'))
+            ).all()
+    
+    return search
+
 def search_api(word, offset=0):
     '''performs an api search for the given phrase'''
 
@@ -161,7 +177,36 @@ def make_track(results):
     db.session.add_all(new)
     db.session.commit()
 
-def find_songs_for_play(query):
+def search_spelling(word):
+    '''search for words that spell out the still missing word'''
+    acronym = []
+
+    word = search_helpers.remove_punctuation(word)
+    for let in word:
+        if let == "c" or let == "C":
+            char = 'see'
+        elif let == "l" or let == "L":
+            char = 'elle'
+        elif let == "p" or let == "p":
+            char = 'pea'
+        else:
+            char = let
+        char_choice = search_helpers.adds_punctuation(char) 
+        char_choice += search_helpers.adds_punctuation(char.upper())
+        char_choice += search_helpers.adds_punctuation(char.lower())
+        char_choice.append(char)
+        char_choice.append(char.lower())
+        char_choice.append(char.upper())
+
+        opts = Track.query.filter(Track.title.in_(char_choice)).all()
+        if len(opts) > 1:
+            acronym.append(choice(opts))
+        else:
+            acronym.append(opts[0])
+
+    return acronym
+
+def fill_song_opts(query):
     '''searches through db, api, on repeat until tracks all found'''
 
     search = search_tracks_by_title(query)
@@ -170,7 +215,8 @@ def find_songs_for_play(query):
     while len(search) == 0:
         new_search = search_api(query[0], q_num)
         make_track(new_search)
-        search = search_tracks_by_title(query)
+        search += search_tracks_by_title(query)
+        search += search_tracks_with_multi_artists(query)
         q_num += 1
 
         if q_num > 10:
@@ -178,13 +224,50 @@ def find_songs_for_play(query):
 
     return search
 
+def find_songs(phrase):
+    query_dict = search_helpers.make_search_options(phrase)
+        
+    tracks = []
+    for query in query_dict:
+        songs_opts = fill_song_opts(query_dict[query])
+        query_dict[query].append(songs_opts)
+        tracks.append(songs_opts)
 
+    return tracks
 
+## not in use
 def pick_songs(search_results):
-    '''pick a random option from the results to pick for playlist'''
+    '''pick a random option from the results to pick for playlist
+    TODO: check length to remove repeated phrases'''
 
     if len(search_results) > 0:
         return choice(search_results)
+
+def fill_chosen_songs(phrase, tracks):
+    '''takes the input phrase, 
+    the tracks chosen by the user
+    and the acronymps picked to spell out difficult words
+    
+    iterate through the track list
+    if the track title is in the input phrase move on
+    if not, run the check spelling and add the chosen songs to the track list
+    insert them where the blank space was for the missing word
+    '''
+
+    track_list = []
+    words = phrase.split()
+    i = 0
+    for word in words:
+        if tracks[i] == 'standin':
+            acronym = search_spelling(word)
+            for song in acronym:
+                track_list.append(song)
+        else: 
+            track_list.append(Track.query.get(tracks[i]))
+        i += 1
+
+    return track_list
+
 
 def make_playlist(phrase, tracks, author):
     '''takes in a given phrase and makes a spotify playlist full of songs
@@ -205,8 +288,8 @@ def make_playlist(phrase, tracks, author):
 
     play_fs = [playlist]
     for track in tracks:
-        spot.playlist_add_items(new['id'], track)
-        feat = create_feat(track, playlist.play_id)
+        spot2.playlist_add_items(new['id'], [track.track_id])
+        feat = create_feat(track.track_id, playlist.play_id)
         play_fs.append(feat)
 
     db.session.add_all(play_fs)
@@ -220,20 +303,6 @@ def make_playlist(phrase, tracks, author):
     don't need their own tracks'''
 
     return playlist.play_id
-
-
-
-
-def find_songs(phrase):
-    query_dict = search_helpers.make_search_options(phrase)
-        
-    tracks = []
-    for query in query_dict:
-        songs_opts = find_songs_for_play(query_dict[query])
-        query_dict[query].append(songs_opts)
-        tracks.append(songs_opts)
-
-    return tracks
 
 
 ## function for searching through the db for playlists featuring keywords
@@ -323,6 +392,7 @@ def show_plays(user_id):
         show['liked'].append([playlist.play_id, playlist.name, author.name])
 
     return show
+
 
 if __name__ == '__main__':
     from server import app

@@ -114,8 +114,11 @@ def choose_songs():
     options = []
     for collection in songs:
         tracks = []
-        for song in collection:
-            tracks.append([song.track_id, song.title, song.artist])
+        if len(collection) == 0:
+            tracks.append(['standin', 'No options found', 'Gotta spell it out'])
+        else:
+            for song in collection:
+                tracks.append([song.track_id, song.title, song.artist])
         options.append(tracks)
 
     return jsonify(options)
@@ -129,9 +132,14 @@ def make_playlist():
         author = model.User.query.get(session['login'])
     phrase = request.json.get('phrase')
     tracks = request.json.get('tracks')
-    print("8888888888888888888888888888"*88)
-    print(phrase)
-    playlist = crud.make_playlist(phrase, tracks[:-1], author)
+    tracks.pop()
+
+    print('\n\n\nline 137')
+    print(phrase, tracks)
+    tracklist = crud.fill_chosen_songs(phrase, tracks)
+    print(tracklist, author)
+    playlist = crud.make_playlist(phrase, tracklist, author)
+    print('\n\n\n\n',playlist)
 
     return playlist
 

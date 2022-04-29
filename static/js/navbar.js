@@ -128,6 +128,7 @@ maker.addEventListener('click', (evt) => {
 					const playInfo = {
 						phrase: playName,
 						tracks: chosen,
+						// acronyms: listedSongs[1]
 					}
 
 					fetch('/make.json', {
