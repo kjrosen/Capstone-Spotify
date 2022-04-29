@@ -98,23 +98,40 @@ def update_user_info():
     user.name = new_name
     model.db.session.commit()
 
-    return 'Information updated'
+    flash('Information updated')
+    return 'true'
 
 
 
-@app.route('/make.json', methods=['POST'])
-def make_playlsit():
+@app.route('/pick.json', methods=['POST'])
+def choose_songs():
     '''search through the database to fill out the playlist'''
 
     name = request.json.get('new')
+
+    songs = crud.find_songs(name)
+    
+    options = []
+    for collection in songs:
+        tracks = []
+        for song in collection:
+            tracks.append([song.track_id, song.title, song.artist])
+        options.append(tracks)
+
+    return jsonify(options)
+
+@app.route('/make.json', methods=['POST'])
+def make_playlist():
 
     if session['login'] == False:
         author = ADMIN
     else:
         author = model.User.query.get(session['login'])
-
-    
-    playlist = crud.make_playlist(name, author)
+    phrase = request.json.get('phrase')
+    tracks = request.json.get('tracks')
+    print("8888888888888888888888888888"*88)
+    print(phrase)
+    playlist = crud.make_playlist(phrase, tracks[:-1], author)
 
     return playlist
 

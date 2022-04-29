@@ -1,21 +1,14 @@
 'use strict';
 
 // sets event listeners for the constances of the navbar
-// item 1/ playlist maker
 const maker = document.getElementById('maker');
-// item 2/ playlist searcher
 const searcher = document.getElementById('searcher');
-// reacting to the optional Join navbar item
 let joiner = document.querySelectorAll('#joiner');
-// all forms render to right box
-// item 1 + 2 + 3/ input box for maker, searcer, joiner
+
 const formBox = document.getElementById('form-box');
-// all results from forms render to left box
-// search results, made playlist
 const listBox = document.getElementById('left-top');
-// list results render playlists in the right box
 const embedBox = document.getElementById('embed-box');
-//on my playlist there's an additional form for users to change user info
+
 let adjuster = document.querySelectorAll('#adjuster');
 
 
@@ -91,21 +84,67 @@ maker.addEventListener('click', (evt) => {
 	makeForm.addEventListener('submit', (evt) => {
 		evt.preventDefault();
 
-		const input = {new: makeForm.firstChild.value};
+		const playName =  makeForm.firstChild.value
+		const input = {new: playName};
 
-		fetch(`/make.json?${input}`, {
+		fetch(`/pick.json?${input}`, {
 			method: 'POST',
 			body: JSON.stringify(input),
 			headers: {
 				'Content-Type': 'application/json',
 			},
 		})
-			.then(playJson => playJson.text())
-			.then(playlistID => {
-				const bigPlay = embedPlay.cloneNode(true);
-				bigPlay.setAttribute('src', `https://open.spotify.com/embed/playlist/${playlistID}?utm_source=generator`);
-				listBox.innerHTML = '';
-				listBox.appendChild(bigPlay);
+		  .then(songJson => songJson.json())
+			.then(listedSongs => {
+				
+				listBox.innerHTML = 'Pick Your Songs';
+				const songPicker = document.createElement('form');
+				// create a drop down menu for each song choice
+				for (const query of listedSongs) {
+					const track = document.createElement('select');
+					songPicker.appendChild(track);
+					for (const opt of query) {
+						const option = document.createElement('option');
+						option.setAttribute('value', opt[0]);
+						option.innerText = `${ opt[1]} by ${ opt[2] }`;
+						songPicker.lastChild.appendChild(option);
+					}
+				}
+
+				songPicker.appendChild(button.cloneNode(true));
+				songPicker.lastChild.innerText = 'Confirm'
+				listBox.appendChild(songPicker);
+
+				// take the ids of choices back to server
+				// to make a playlist
+				songPicker.addEventListener('submit', (evt) => {
+					evt.preventDefault();
+
+					const chosen = [];
+					for (const opt of songPicker.children) {
+						chosen.push(opt.value);
+					}
+					
+					const playInfo = {
+						phrase: playName,
+						tracks: chosen,
+					}
+
+					fetch('/make.json', {
+						method: 'POST',
+						body: JSON.stringify(playInfo),
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					})
+						.then(playJson => playJson.text())
+						.then(playlistID => {
+							const bigPlay = embedPlay.cloneNode(true);
+							bigPlay.setAttribute('src', `https://open.spotify.com/embed/playlist/${playlistID}?utm_source=generator`);
+							listBox.innerHTML = '';
+							listBox.appendChild(bigPlay);
+						});
+				});
 			});
 	});
 });
@@ -234,8 +273,9 @@ if (adjuster.length > 0){
 							})
 								.then(response => response.text())
 								.then(confirm => {
-									alert(confirm);
-									formBox.innerHTML = '';
+									if (confirm == 'true') {
+									location.reload();
+									}
 								});
 						});
 					} else {

@@ -178,14 +178,15 @@ def find_songs_for_play(query):
 
     return search
 
+
+
 def pick_songs(search_results):
     '''pick a random option from the results to pick for playlist'''
 
     if len(search_results) > 0:
         return choice(search_results)
 
-
-def make_playlist(phrase, author):
+def make_playlist(phrase, tracks, author):
     '''takes in a given phrase and makes a spotify playlist full of songs
     currently the first word from title spells out the word
 
@@ -202,34 +203,37 @@ def make_playlist(phrase, author):
     new = spot2.user_playlist_create(app_id, phrase)
     playlist = create_playlist(new['id'], phrase, author.user_id)
 
-    query_dict = search_helpers.make_search_options(phrase)
-    
-    tracks = []
-    for query in query_dict:
-        songs_opts = find_songs_for_play(query_dict[query])
-        song_pick = pick_songs(songs_opts)
-
-        #TODO: 
-        '''
-        do something here to check the length of the track title.
-        
-        if a word can only be incorporated by ngram than the neighbors within that ngram
-        don't need their own tracks'''
-        
-        if song_pick != None:
-            tracks.append(song_pick)
-
-
     play_fs = [playlist]
     for track in tracks:
-        spot.playlist_add_items(new['id'], [track.track_id])
-        feat = create_feat(track.track_id, playlist.play_id)
+        spot.playlist_add_items(new['id'], track)
+        feat = create_feat(track, playlist.play_id)
         play_fs.append(feat)
 
     db.session.add_all(play_fs)
     db.session.commit()
 
+    #TODO: 
+    '''
+    do something here to check the length of the track title.
+    
+    if a word can only be incorporated by ngram than the neighbors within that ngram
+    don't need their own tracks'''
+
     return playlist.play_id
+
+
+
+
+def find_songs(phrase):
+    query_dict = search_helpers.make_search_options(phrase)
+        
+    tracks = []
+    for query in query_dict:
+        songs_opts = find_songs_for_play(query_dict[query])
+        query_dict[query].append(songs_opts)
+        tracks.append(songs_opts)
+
+    return tracks
 
 
 ## function for searching through the db for playlists featuring keywords

@@ -3,7 +3,6 @@ def remove_punctuation(phrase):
 
     phrase = phrase.replace(".","")
     phrase = phrase.replace(",","")
-    phrase = phrase.replace("'","")
     phrase = phrase.replace("-","")
     phrase = phrase.replace("!","")
     phrase = phrase.replace("?","")
@@ -51,7 +50,6 @@ def make_ngrams(words):
 
     return collection
 
-
 def make_search_options(phrase):
     '''make many options for each word in the phrase to use for SQL searches
     look for upper.(), title.(), lower() of each word
@@ -74,6 +72,7 @@ def make_search_options(phrase):
         word_dict[word_i].append(word.title())
         word_dict[word_i].append(make_acronym(word.upper()))
         word_dict[word_i] += adds_punctuation(word.upper())
+        word_dict[word_i] += adds_punctuation(word.lower())
 
     return word_dict
 
