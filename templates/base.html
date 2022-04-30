@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="/static/css/style.css">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+		<link rel="stylesheet" href="/static/css/style-wBoots.css">
 		<link rel="icon" type="image/x-icon" href="/static/images/spotibanana.png">
 
 		<title>{% block head %}  {% endblock%}</title>
@@ -11,62 +13,58 @@
 				<a href="/">Playlist Maker</a>
 			</div>
 
-			<div id="navbar">
-
-				<span id="maker">New</span>
-				<span id="searcher">Search</span>
-
-				<!-- Check session data to show either
-				A - link to my playlists and logout indicator -->
-				{% if session['login'] != False %}
-					<a href="/mine">My Playlists</a>
-					<a href="/logout">Log out</a>
-				<!-- B - an event target to show the login route 
-				event in navbar.js -->
-				{% else %}
-					<span id="joiner">Join</span>
-				{% endif %}
-
+			<!-- navbar always appears on the top of the page, below the header -->
+			<div class="container" id="navbar">
+				<div class="row">
+					<!-- spans in navbar are handled by navbar.js events -->
+					<span class="col" id="maker">New</span>
+					<span class="col" id="searcher">Search</span>
+					<!-- links go to new routes, only showable to logged in users 
+					links only show up deppending on session info-->
+					{% if session['login'] != False %}
+						<a class="col" href="/mine">My Playlists</a>
+						<a class="col" href="/logout">Log out</a>	
+					{% else %}
+						<span class="col" id="joiner">Join</span>
+					{% endif %}
+				</div>
 			</div>
 
+			<div class="container" id="results">
+				<span class="row">
+					<!-- recently created playlists and search results -->
+					<div class="col-8" id="left">
+						<div class="row" id="left-top">
+							{% block leftTop %} {% endblock %}
+						</div>
+						<div class="row" id="left-low">
+							{% block leftLow %} {% endblock %}
+						</div>
+					</div>
 
-			<div id="result-boxes">
-				<!-- Left block shows search results -->
-				<span id="left-block">
-					<div id="left-top">{% block leftTop %} {% endblock %}</div>
-					<div id="left-low">{% block leftLow %} {% endblock %}</div>
-				</span>
-				<!-- Right block shows input forms -->
-				<span id="right-block">
-					<span id="flash">
-						<ul>
-							<!-- Flash any messages (login info) -->
-						{% for message in get_flashed_messages() %}
-						  <li>{{ message }}</li>
-						{% endfor %}
-						</ul>
-					</span>
-					<!-- Uses Navbar.js events to populate bar
-					with different input bars -->
-					<span id="form-box">
-						
-					</span>
-					<br>
-					<!-- or spotify playlists-->
-					<span id="embed-box">
+					<div class="col-4" id="right">
+						<span class="row" id="form-box" id="flash">
+							<ul>
+								<!-- Flash any messages (login info) -->
+							{% for message in get_flashed_messages() %}
+								<li>{{ message }}</li>
+							{% endfor %}
+							</ul>
+						</span>
+						<div class="row" id="embed-box">
 
-					</span>
+						</div>
+					</div>
 				</span>
 			</div>
+
+			<footer class="row" id="foot">
+				<span class="col">
+					{% block foot %} {% endblock %}
+				</span>
+				
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+				<script src="/static/js/navbar.js"></script>
+			</footer>
     </body>
-	<footer id="foot">
-		<!-- if the user is logged in - so js doesn't complain -->
-		{% if session['login'] != False %} 
-			<span id="joiner"></span> 
-		{% endif %}
-		{% block foot %}
-		
-		{% endblock %}
-		<script src="/static/js/navbar.js"></script>
-	</footer>
 </html>

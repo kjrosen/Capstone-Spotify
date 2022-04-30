@@ -99,10 +99,14 @@ maker.addEventListener('click', (evt) => {
 				
 				listBox.innerHTML = 'Pick Your Songs';
 				const songPicker = document.createElement('form');
+				songPicker.setAttribute('class', 'container');
+
 				// create a drop down menu for each song choice
 				for (const query of listedSongs) {
 					const track = document.createElement('select');
+					track.setAttribute('class', 'row');
 					songPicker.appendChild(track);
+
 					for (const opt of query) {
 						const option = document.createElement('option');
 						option.setAttribute('value', opt[0]);
@@ -112,6 +116,7 @@ maker.addEventListener('click', (evt) => {
 				}
 
 				songPicker.appendChild(button.cloneNode(true));
+				songPicker.removeAttribute('class');
 				songPicker.lastChild.innerText = 'Confirm'
 				listBox.appendChild(songPicker);
 
@@ -128,7 +133,6 @@ maker.addEventListener('click', (evt) => {
 					const playInfo = {
 						phrase: playName,
 						tracks: chosen,
-						// acronyms: listedSongs[1]
 					}
 
 					fetch('/make.json', {
@@ -194,19 +198,22 @@ if (joiner.length > 0) {
 		const logForm = queryForm.cloneNode(true);
 		logForm.setAttribute('action', '/login');
 		logForm.setAttribute('method', 'POST');
-		logForm.firstChild.setAttribute('type', 'password');
-		logForm.firstChild.setAttribute('name', 'password');
-		logForm.insertAdjacentHTML('afterbegin', 'Password: ');
-		logForm.insertAdjacentElement('afterbegin', inputText.cloneNode(true));
-		logForm.firstChild.setAttribute('name', 'email');
-		logForm.insertAdjacentHTML('afterbegin', 'Email: ');
-		logForm.lastChild.innerText = 'Log In';
+		const passw = logForm.firstChild;
+		passw.setAttribute('type', 'password');
+		passw.setAttribute('name', 'password');
+		logForm.insertAdjacentHTML('afterbegin', '<br>Password: <br>');
+		const emai = inputText.cloneNode(true);
+		emai.setAttribute('name', 'email');
+		logForm.insertAdjacentElement('afterbegin', emai);
+		logForm.insertAdjacentHTML('afterbegin', '<br>Email: <br>');
+		const logButt = logForm.lastChild;
+		logButt.innerText = 'Log In';
 
 		const joinForm = logForm.cloneNode(true);
 		joinForm.setAttribute('action', '/join');
 		joinForm.insertAdjacentElement('afterbegin', inputText.cloneNode(true));
 		joinForm.firstChild.setAttribute('name', 'name');
-		joinForm.insertAdjacentHTML('afterbegin', 'Username: ');
+		joinForm.insertAdjacentHTML('afterbegin', '<br>Username: <br>');
 		joinForm.lastChild.innerText = 'Sing Up';
 
 		formBox.innerHTML = '';
@@ -217,7 +224,7 @@ if (joiner.length > 0) {
 	});
 }
 
-console.log(adjuster)
+
 // if the user is already logged in they can adjust their name or password
 if (adjuster.length > 0){
 	adjuster = adjuster[0];
@@ -250,10 +257,10 @@ if (adjuster.length > 0){
 						const change = queryForm.cloneNode(true);
 						change.firstChild.setAttribute('type', 'password');
 						change.firstChild.setAttribute('id', 'pw');
-						change.insertAdjacentHTML('afterbegin', 'Password<br>');
+						change.insertAdjacentHTML('afterbegin', 'Password: <br>');
 						change.insertAdjacentElement('afterbegin', inputText.cloneNode(true));
 						change.firstChild.setAttribute('id', 'name');
-						change.insertAdjacentHTML('afterbegin', 'User name<br>');
+						change.insertAdjacentHTML('afterbegin', 'Username: <br>');
 						change.lastChild.innerText = 'Update';
 						formBox.appendChild(change);
 
