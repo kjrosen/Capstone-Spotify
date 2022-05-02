@@ -168,6 +168,7 @@ searcher.addEventListener('click', (evt) => {
 	seaForm.addEventListener('submit', (evt) => {
 		evt.preventDefault();
 
+		listBox.innerHTML = '';
 		const query = {query: seaForm.firstChild.value};
 		const queryString = new URLSearchParams(query).toString();
 
@@ -175,7 +176,7 @@ searcher.addEventListener('click', (evt) => {
 			.then(results => results.json())
 			.then(resLists => {
 
-				listBox.innerHTML = '';
+				results.innerHTML = '';
 				listBox.appendChild(results);
 				for (const item of resLists) {
 					results.insertAdjacentHTML('beforeend', `<li id="${item[0]}">${item[1]} by ${item[2]}</li>`);

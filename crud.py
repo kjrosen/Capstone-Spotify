@@ -397,30 +397,3 @@ def show_plays(user_id):
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)
-
-
-
-
-# def make_feats(playlist):
-
-#     tracks = spot.playlist_items(playlist.play_id)
-#     items = tracks['items']
-#     feats = []
-#     for item in items:
-#         id = item['track']['id']
-#         title = item['track']['name']
-#         artist = item['track']['artists'][0]['name']
-
-
-#         if Track.query.get(id) == None:
-#             song = create_track(id, title, artist)
-#             db.session.add(song)
-#             db.session.commit()
-
-#         feat = create_feat(id, playlist.play_id)
-#         feats.append(feat)
-
-#     db.session.add_all(feats)
-#     db.session.commit()
-
-#     return feats
