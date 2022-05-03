@@ -31,12 +31,21 @@ embedPlay.setAttribute('frameBorder', '0');
 embedPlay.setAttribute('allowfullscreen', '');
 embedPlay.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture')
 
-const results = document.createElement('ul');
+//and X-out options for search results to clear the field
+const ex = document.createElement('button');
+ex.innerText = 'X'
+ex.setAttribute('type', 'button')
+
+
+// for main page's Popular Playlists list
+const popPlays = document.querySelector('#popular');
+
+
 //the feature that lets listed playlists be embedable
 // search results and also the most popular all populate in left block
-function embedListedPlay(list_box=results) {
+function embedListedPlay(list_box=popPlays) {
 	const plays = list_box.children;
-
+	console.log(plays);
 	for (const play of plays) {
 		play.addEventListener('click', (evt) => {
 			const playlist = evt.target.id;
@@ -68,6 +77,8 @@ function embedListedPlay(list_box=results) {
 		});
 	}
 }
+
+embedListedPlay(popPlays);
 
 
 // on click a make bar appears in the right bar
@@ -175,14 +186,22 @@ searcher.addEventListener('click', (evt) => {
 		fetch(`/search.json?${queryString}`)
 			.then(results => results.json())
 			.then(resLists => {
+				const results = document.createElement('ul');
+				results.setAttribute('class', 'container');
 
-				results.innerHTML = '';
+				results.innerHTML = `<h2 col="row">${queryString}</h2>`;
 				listBox.appendChild(results);
 				for (const item of resLists) {
-					results.insertAdjacentHTML('beforeend', `<li id="${item[0]}">${item[1]} by ${item[2]}</li>`);
+					results.insertAdjacentHTML('beforeend', `<li class="row" id="${item[0]}">${item[1]} by ${item[2]}</li>`);
 				}
-
+				
+				listBox.insertAdjacentElement('afterbegin', ex);
 				embedListedPlay(results);
+
+				ex.addEventListener('click', (evt) => {
+					evt.preventDefault();
+					listBox.innerHTML = '';
+				});
 			});
 	});
 });
@@ -231,7 +250,7 @@ if (adjuster.length > 0){
 	adjuster = adjuster[0];
 
 	adjuster.addEventListener('click', (evt) => {
-		formBox.innerHTML = 'Verify your information<br>';
+		formBox.innerHTML = 'Verify your password<br>';
 		const verify = queryForm.cloneNode(true);
 		verify.firstChild.setAttribute('type', 'password');
 		verify.lastChild.innerText = 'Confirm'
@@ -296,13 +315,16 @@ if (adjuster.length > 0){
 }
 
 
-// on main page and myplaylists, lists are already present
-const authoredPlays = document.querySelectorAll('#left-top ul');
+// on myplaylists, lists are already present
+const authoredPlays = document.querySelectorAll('#authored');
 if (authoredPlays.length > 0) {
 	embedListedPlay(authoredPlays[0]);
 }
+
+
+
 // use embedListedPlay if they exist
-const likedPlays = document.querySelectorAll('#left-low ul');
+const likedPlays = document.querySelectorAll('#liked');
 if (likedPlays.length > 0) {
-	embedListedPlay(likedPlays[0]);
+	embedListedPlay(likedPlays);
 }

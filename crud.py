@@ -130,8 +130,7 @@ def make_account(email, password, name):
 
 
 ## functions for creating playlists from user input phrases
-## TODO: add a last ditch search to spell out unfindable words
-## TODO: if a multi-word song is chosen take out the other songs in title
+## TODO: if a multi-word song is chosen take out the other songs in title automatically
 
 def search_tracks_by_title(queries):
     '''search for songs from db for the given set of search parameters phrase in a text'''
@@ -163,7 +162,7 @@ def search_api(word, offset=0):
 
     return result
 
-def make_track(results):
+def make_tracks(results):
     '''goes through set of API search results and turns into tracks'''
 
     new = []
@@ -214,7 +213,7 @@ def fill_song_opts(query):
     q_num = 0
     while len(search) == 0:
         new_search = search_api(query[0], q_num)
-        make_track(new_search)
+        make_tracks(new_search)
         search += search_tracks_by_title(query)
         search += search_tracks_with_multi_artists(query)
         q_num += 1
@@ -235,7 +234,7 @@ def find_songs(phrase):
 
     return tracks
 
-## not in use
+## not in use - letting users pick songs instead
 def pick_songs(search_results):
     '''pick a random option from the results to pick for playlist
     TODO: check length to remove repeated phrases'''

@@ -3,23 +3,25 @@
 {% block head %}All my nonsense{% endblock %} 
 
 {% block leftTop %} 
-<h1>Hi {{ user_name }}</h1>
-<h2>authored playlists</h2>
-<ul>
+<h1 class="row">Welcome, {{ user_name }}</h1>
+<h2 class="row">authored playlists</h2>
+<ul class="container" id="authored">
     {% for play in created %}
-        <li id={{ play[0] }}>{{ play[1] }}</li>
+        <li class="row" id={{ play[0] }}>{{ play[1] }}</li>
     {% endfor %} 
 </ul>
 {% endblock %}
 {% block leftLow %}
-<h2>Liked playlists</h2>
-<ul>
+<h2 class="row">Liked playlists</h2>
+<ul class="container" id="liked">
     {% for play in liked %} 
-        <li id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
+        <label class="row">
+            <li class="col-10" id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
+        </label>
     {% endfor %}
 </ul>
 {% endblock %}
 
 {% block foot %} 
-    <span id="adjuster">account details</span>
+    <span class="row" id="adjuster">account details</span>
 {% endblock %}
