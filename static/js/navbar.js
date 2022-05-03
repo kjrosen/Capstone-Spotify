@@ -38,14 +38,15 @@ ex.setAttribute('type', 'button')
 
 
 // for main page's Popular Playlists list
-const popPlays = document.querySelector('#popular');
+const popPlays = document.querySelectorAll('#popular');
+const results = document.createElement('ul');
+results.setAttribute('class', 'container');
 
 
 //the feature that lets listed playlists be embedable
 // search results and also the most popular all populate in left block
-function embedListedPlay(list_box=popPlays) {
+function embedListedPlay(list_box=results) {
 	const plays = list_box.children;
-	console.log(plays);
 	for (const play of plays) {
 		play.addEventListener('click', (evt) => {
 			const playlist = evt.target.id;
@@ -78,7 +79,7 @@ function embedListedPlay(list_box=popPlays) {
 	}
 }
 
-embedListedPlay(popPlays);
+embedListedPlay(popPlays[0]);
 
 
 // on click a make bar appears in the right bar
@@ -108,15 +109,20 @@ maker.addEventListener('click', (evt) => {
 		  .then(songJson => songJson.json())
 			.then(listedSongs => {
 				
-				listBox.innerHTML = 'Pick Your Songs';
+				listBox.innerHTML = '<h3 class="row">Pick Your Songs<h3>';
 				const songPicker = document.createElement('form');
 				songPicker.setAttribute('class', 'container');
+        const skip = document.createElement('option');
+        skip.setAttribute('value', 'skip');
+        skip.innerText = 'Skip this song';
+
 
 				// create a drop down menu for each song choice
 				for (const query of listedSongs) {
 					const track = document.createElement('select');
 					track.setAttribute('class', 'row');
 					songPicker.appendChild(track);
+          songPicker.lastChild.appendChild(skip.cloneNode(true));
 
 					for (const opt of query) {
 						const option = document.createElement('option');
@@ -186,9 +192,7 @@ searcher.addEventListener('click', (evt) => {
 		fetch(`/search.json?${queryString}`)
 			.then(results => results.json())
 			.then(resLists => {
-				const results = document.createElement('ul');
-				results.setAttribute('class', 'container');
-
+				
 				results.innerHTML = `<h2 col="row">${queryString}</h2>`;
 				listBox.appendChild(results);
 				for (const item of resLists) {
@@ -326,5 +330,5 @@ if (authoredPlays.length > 0) {
 // use embedListedPlay if they exist
 const likedPlays = document.querySelectorAll('#liked');
 if (likedPlays.length > 0) {
-	embedListedPlay(likedPlays);
+	embedListedPlay(likedPlays[0]);
 }

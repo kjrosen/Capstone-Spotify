@@ -261,6 +261,8 @@ def fill_chosen_songs(phrase, tracks):
             acronym = search_spelling(word)
             for song in acronym:
                 track_list.append(song)
+        elif tracks[i] == 'skip':
+            pass
         else: 
             track_list.append(Track.query.get(tracks[i]))
         i += 1

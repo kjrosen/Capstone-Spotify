@@ -5,7 +5,7 @@ import os
 
 import crud
 import model
-import server
+from server import app
 import json
 
 ## give the commands to drop and recreate db
@@ -14,14 +14,15 @@ os.system('createdb music')
 # os.system('source secrets.sh')
 # os.system('psql music < data/musicBack.sql')
 
-model.connect_to_db(server.app)
+model.connect_to_db(app)
 model.db.create_all()
 
 
 
-## takes users from users.json and fills into database
+# takes users from users.json and fills into database
 file = open('data/users.json').read()
 all_users = json.loads(file)
+
 def fill_users(users=all_users):
 
     user_list = []
@@ -67,9 +68,9 @@ fill_tracks()
 
 
 ## makes an api search to get all tracks from a playlist, save if not in db, and create feat
-def make_feats(playlist):
+def make_feats(play_id):
 
-    tracks = crud.spot.playlist_items(playlist.play_id)
+    tracks = crud.spot.playlist_items(play_id)
     items = tracks['items']
     feats = []
     for item in items:
@@ -83,7 +84,7 @@ def make_feats(playlist):
             crud.db.session.add(song)
             crud.db.session.commit()
 
-        feat = crud.create_feat(id, playlist.play_id)
+        feat = crud.create_feat(id, play_id)
         feats.append(feat)
 
     crud.db.session.add_all(feats)
@@ -105,12 +106,16 @@ def fill_playlists_and_feats(playlists=all_plays):
         playlist = crud.create_playlist(id_, name, 1)
         plays.append(playlist)
 
-        make_feats(id_)
+        # make_feats(id_)
 
     crud.db.session.add_all(plays)
     crud.db.session.commit()
 
+fill_playlists_and_feats()
 
+all_plays = model.Playlist.query.all()
+for play in all_plays:
+    make_feats(play.play_id)
 
 # file = open('data/plays.json').read()
 # all_plays = json.loads(file)

@@ -20,6 +20,7 @@ def homepage():
     session['login'] = session.get('login', False)
     top5 = crud.top5_plays()
     
+    # return render_template('home.html')
     return render_template('home.html', top5=top5)
 
 
@@ -134,12 +135,8 @@ def make_playlist():
     tracks = request.json.get('tracks')
     tracks.pop()
 
-    print('\n\n\nline 137')
-    print(phrase, tracks)
     tracklist = crud.fill_chosen_songs(phrase, tracks)
-    print(tracklist, author)
     playlist = crud.make_playlist(phrase, tracklist, author)
-    print('\n\n\n\n',playlist)
 
     return playlist
 
