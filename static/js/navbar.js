@@ -29,7 +29,7 @@ embedPlay.setAttribute('width', '100%');
 embedPlay.setAttribute('height', '380');
 embedPlay.setAttribute('frameBorder', '0');
 embedPlay.setAttribute('allowfullscreen', '');
-embedPlay.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture')
+// embedPlay.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture')
 
 //and X-out options for search results to clear the field
 const ex = document.createElement('button');
@@ -112,9 +112,9 @@ maker.addEventListener('click', (evt) => {
 				listBox.innerHTML = '<h3 class="row">Pick Your Songs<h3>';
 				const songPicker = document.createElement('form');
 				songPicker.setAttribute('class', 'container');
-        const skip = document.createElement('option');
-        skip.setAttribute('value', 'skip');
-        skip.innerText = 'Skip this song';
+				const skip = document.createElement('option');
+				skip.setAttribute('value', 'skip');
+				skip.innerText = 'Skip this song';
 
 
 				// create a drop down menu for each song choice
@@ -122,7 +122,7 @@ maker.addEventListener('click', (evt) => {
 					const track = document.createElement('select');
 					track.setAttribute('class', 'row');
 					songPicker.appendChild(track);
-          songPicker.lastChild.appendChild(skip.cloneNode(true));
+          			songPicker.lastChild.appendChild(skip.cloneNode(true));
 
 					for (const opt of query) {
 						const option = document.createElement('option');
@@ -135,7 +135,6 @@ maker.addEventListener('click', (evt) => {
 				songPicker.appendChild(button.cloneNode(true));
 				songPicker.removeAttribute('class');
 				songPicker.lastChild.innerText = 'Confirm'
-				listBox.appendChild(songPicker);
 
 				// take the ids of choices back to server
 				// to make a playlist
@@ -193,12 +192,13 @@ searcher.addEventListener('click', (evt) => {
 			.then(results => results.json())
 			.then(resLists => {
 				
-				results.innerHTML = `<h2 col="row">${queryString}</h2>`;
-				listBox.appendChild(results);
+				listBox.innerHTML = `<h3 col="row">${queryString}</h3>`;
+				results.innerHTML = ''
 				for (const item of resLists) {
 					results.insertAdjacentHTML('beforeend', `<li class="row" id="${item[0]}">${item[1]} by ${item[2]}</li>`);
 				}
 				
+				listBox.appendChild(results);
 				listBox.insertAdjacentElement('afterbegin', ex);
 				embedListedPlay(results);
 

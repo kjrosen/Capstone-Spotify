@@ -3,21 +3,20 @@
 {% block head %}All my nonsense{% endblock %} 
 
 {% block leftTop %} 
-<h1 class="row">Welcome, {{ user_name }}</h1>
-<h2 class="row">authored playlists</h2>
+<h2 class="row">Welcome, {{ user_name }}</h2>
+<h3 class="row">authored playlists</h3>
 <ul class="container" id="authored">
     {% for play in created %}
         <li class="row" id={{ play[0] }}>{{ play[1] }}</li>
     {% endfor %} 
 </ul>
 {% endblock %}
+
 {% block leftLow %}
-<h2 class="row">Liked playlists</h2>
+<h3 class="row">Liked playlists</h3>
 <ul class="container" id="liked">
     {% for play in liked %} 
-        <label class="row">
-            <li class="col-10" id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
-        </label>
+        <li class="row" id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
     {% endfor %}
 </ul>
 {% endblock %}

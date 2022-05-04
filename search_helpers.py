@@ -21,6 +21,7 @@ def remove_punctuation(phrase):
     phrase = phrase.replace('"', '')
     phrase = phrase.replace(';', '')
     phrase = phrase.replace('/', '')
+    phrase = phrase.replace("'", "")
 
     return phrase
 
@@ -51,7 +52,7 @@ def adds_punctuation(word):
     
     """
 
-    return [word+".", word+"!", word+"?", word+",", word+"..."]
+    return [word+".", word+"!", word+"?", word+",", word+"...", word+"+"]
 
 def make_ngrams(words):
     """takes in a list of strings and returns a dictionary of lists

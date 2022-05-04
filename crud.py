@@ -180,14 +180,16 @@ def search_spelling(word):
     '''search for words that spell out the still missing word'''
     acronym = []
 
-    word = search_helpers.remove_punctuation(word)
+    word = search_helpers.remove_punctuation(word).lower()
     for let in word:
-        if let == "c" or let == "C":
+        if let == "c":
             char = 'see'
-        elif let == "l" or let == "L":
+        elif let == "l":
             char = 'elle'
-        elif let == "p" or let == "p":
+        elif let == "p":
             char = 'pea'
+        elif let == "t":
+            char = 'tea'
         else:
             char = let
         char_choice = search_helpers.adds_punctuation(char) 
@@ -198,10 +200,18 @@ def search_spelling(word):
         char_choice.append(char.upper())
 
         opts = Track.query.filter(Track.title.in_(char_choice)).all()
+        search_num = 0
+        while len(opts) < 1 and search_num < 10:
+            new = []
+            for opt in char_choice:
+                make_tracks(spot.search(q=opt, limit=50, offset=0))
+
+            # make_tracks(new)
+            opts = Track.query.filter(Track.title.in_(char_choice)).all()
+            search_num +=1 
+
         if len(opts) > 1:
             acronym.append(choice(opts))
-        else:
-            acronym.append(opts[0])
 
     return acronym
 
