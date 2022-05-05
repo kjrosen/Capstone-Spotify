@@ -41,7 +41,17 @@ def sign_in():
         return redirect('/')
     else:
         session['login'] = user_id
-        return redirect('/')
+
+        return redirect('/auth')
+
+@app.route('/auth')
+def authenticate_spotify_acct():
+    '''signs a user into their spotify account'''
+    
+    url = request.url
+    crud.new_spot_token(url)
+
+    return redirect('/')
 
 
 @app.route('/join', methods=['POST'])
@@ -59,7 +69,7 @@ def sign_up():
         return redirect('/')
     else:
         session['login'] = user_id
-        return redirect('/')
+        return redirect('/auth')
         
 
 @app.route('/logout')

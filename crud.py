@@ -9,6 +9,7 @@ import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
+
 ##spotipy finds the credentials in the environment and sets it to auth_manager
 ##for searching and ClientCredentials flow
 authorization = SpotifyClientCredentials()
@@ -17,7 +18,8 @@ url = 'https://api.spotify.com/v1/search?'
 app_id = os.environ['APP_ID']
 
 scope = 'playlist-modify-public'
-spot2 = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+auth = SpotifyOAuth(scope=scope)
+spot_user = spotipy.Spotify(auth_manager=auth)
 
 
 '''
@@ -30,7 +32,7 @@ for song in songs:
 
 # tracks = spot.playlist_tracks(playlist_id)
 
-# new = spot2.user_playlist_create(app_id, 'play_name')
+# new = spot_user.user_playlist_create(app_id, 'play_name')
 new playlist redirects to a new page, set it specifically
 play more with the redirect and authorization, it's confusing
 '''
@@ -124,10 +126,23 @@ def make_account(email, password, name):
         new = create_user(name=name, email=email, pw=password)
         db.session.add(new)
         db.session.commit()
+        
         return new.user_id
     else: 
         return False
 
+def new_spot_token(url):
+    ''''''
+
+    token_info = auth.get_cached_token()
+    if token_info:
+        auth.
+    res = auth.get_auth_response()
+    code = auth.get_authorization_code(res)
+    # code = auth.parse_response_code(url)
+    token = auth.get_access_token(code, check_cache=False)
+
+    return token
 
 ## functions for creating playlists from user input phrases
 ## TODO: if a multi-word song is chosen take out the other songs in title automatically
@@ -155,12 +170,14 @@ def search_tracks_with_multi_artists(queries):
     
     return search
 
+
 def search_api(word, offset=0):
     '''performs an api search for the given phrase'''
 
     result = spot.search(q=word, type='track', limit=50, offset=offset)
 
     return result
+
 
 def make_tracks(results):
     '''goes through set of API search results and turns into tracks'''
@@ -175,6 +192,7 @@ def make_tracks(results):
 
     db.session.add_all(new)
     db.session.commit()
+
 
 def search_spelling(word):
     '''search for words that spell out the still missing word'''
@@ -214,6 +232,7 @@ def search_spelling(word):
             acronym.append(choice(opts))
 
     return acronym
+
 
 def fill_song_opts(query):
     '''searches through db, api, on repeat until tracks all found'''
@@ -289,29 +308,23 @@ def make_playlist(phrase, tracks, author):
   
     ## cannot give spotify ownership to users - TODO:
     ## figure out how to give it to them
-    # if author.spot_id == None:
-    #     id_ = app_id
-    # else:
-    #     id_ = author.spot_id
 
-    new = spot2.user_playlist_create(app_id, phrase)
+    if author.spot_id == None:
+        id_ = app_id
+    else:
+        id_ = author.spot_id
+
+    new = spot_user.user_playlist_create(id_, phrase)
     playlist = create_playlist(new['id'], phrase, author.user_id)
 
     play_fs = [playlist]
     for track in tracks:
-        spot2.playlist_add_items(new['id'], [track.track_id])
+        spot_user.playlist_add_items(new['id'], [track.track_id])
         feat = create_feat(track.track_id, playlist.play_id)
         play_fs.append(feat)
 
     db.session.add_all(play_fs)
     db.session.commit()
-
-    #TODO: 
-    '''
-    do something here to check the length of the track title.
-    
-    if a word can only be incorporated by ngram than the neighbors within that ngram
-    don't need their own tracks'''
 
     return playlist.play_id
 

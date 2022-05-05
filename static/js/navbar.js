@@ -134,7 +134,9 @@ maker.addEventListener('click', (evt) => {
 
 				songPicker.appendChild(button.cloneNode(true));
 				songPicker.removeAttribute('class');
-				songPicker.lastChild.innerText = 'Confirm'
+				songPicker.lastChild.innerText = 'Confirm';
+
+				listBox.appendChild(songPicker);
 
 				// take the ids of choices back to server
 				// to make a playlist
