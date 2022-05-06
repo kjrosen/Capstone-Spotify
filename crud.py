@@ -22,24 +22,7 @@ auth = SpotifyOAuth(scope=scope)
 spot_user = spotipy.Spotify(auth_manager=auth)
 
 
-'''
-# results = spot.search(q='',type='track',limit=50)
-songs = results['tracks']['items']
-for song in songs:
-    song['uri']
-    song['name']
-    song['artists'][0]['name']
-
-# tracks = spot.playlist_tracks(playlist_id)
-
-# new = spot_user.user_playlist_create(app_id, 'play_name')
-new playlist redirects to a new page, set it specifically
-play more with the redirect and authorization, it's confusing
-'''
-
-
-## below functions create new instances for each table
-
+## functions to create new instances for each table
 def create_track(track_id, title, artist):
     """take Spotify info and return a new track in local db."""
     
@@ -92,8 +75,7 @@ def create_user(name, email, pw, spot_id=None):
     return user
 
 
-## functions for creating an account, logging in, and confirming email isn't taken
-
+## functions for creating an account management
 def check_email(email):
     '''checks if email is already in db, returns list of user exists '''
 
@@ -101,6 +83,7 @@ def check_email(email):
 
     return check
     
+
 def log_in(email, password):
     '''checks a user's password, returns their id if successful
     flase if password wrong or email not in db'''
@@ -114,6 +97,7 @@ def log_in(email, password):
             return user.user_id
     
     return False
+
 
 def make_account(email, password, name):
     '''checks if user email is taken
@@ -131,30 +115,30 @@ def make_account(email, password, name):
     else: 
         return False
 
-def new_spot_token(url):
-    ''''''
 
-    token_info = auth.get_cached_token()
-    if token_info:
-        auth.
-    res = auth.get_auth_response()
-    code = auth.get_authorization_code(res)
-    # code = auth.parse_response_code(url)
-    token = auth.get_access_token(code, check_cache=False)
+##TODO: finish this
+# def new_spot_token(url):
+#     '''generate a new auth at account creation'''
 
-    return token
+#     # token_info = auth.get_cached_token()
+#     res = auth.get_auth_response()
+#     code = auth.get_authorization_code(res)
+#     # code = auth.parse_response_code(url)
+#     token = auth.get_access_token(code, check_cache=False)
 
-## functions for creating playlists from user input phrases
-## TODO: if a multi-word song is chosen take out the other songs in title automatically
+#     return token
 
-def search_tracks_by_title(queries):
+
+'''## functions for creating playlists from user input phrases'''
+def get_tracks_by_title(queries):
     '''search for songs from db for the given set of search parameters phrase in a text'''
 
     search = Track.query.filter(Track.title.in_(queries)).all()
 
     return search
 
-def search_tracks_with_multi_artists(queries):
+
+def get_tracks_with_multi_artists(queries):
     '''search for songs that allow for featured artist'''
 
     search = []
@@ -180,7 +164,7 @@ def search_api(word, offset=0):
 
 
 def make_tracks(results):
-    '''goes through set of API search results and turns into tracks'''
+    '''goes through set of API search results and turns into track objects'''
 
     new = []
     for item in results['tracks']['items']:
@@ -194,39 +178,74 @@ def make_tracks(results):
     db.session.commit()
 
 
-def search_spelling(word):
-    '''search for words that spell out the still missing word'''
+def get_songs_by_search_list(query):
+    '''takes a list of search terms and searches through db, then api, on repeat until at least one option is found
+    stops after 10 api searches to cut back on wait time and call number 
+    and because 500 is a lot of songs to result in nothing'''
+
+    search = get_tracks_by_title(query)
+
+    q_num = 0
+    while len(search) == 0 and q_num < 10:
+        new_search = search_api(query[0], q_num)
+        new = make_tracks(new_search)
+        search += get_tracks_by_title(query)
+        search += get_tracks_with_multi_artists(query)
+        q_num += 1
+
+
+    return search
+
+
+def get_tracklist_opts(phrase):
+    '''creates a dictionary of search options for each word in a phrase
+    finds songs for each set of search options'''
+    
+    query_dict = search_helpers.make_search_options(phrase)
+        
+    options = []
+
+    for query in query_dict:
+        song_opts = get_songs_by_search_list(query_dict[query])
+        # query_dict[query].append(songs_opts)
+
+        tracklist = []
+        if len(song_opts) == 0:
+            pass
+        else:
+            for song in song_opts:
+                tracklist.append({'track_id': song.track_id, 'song title': song.title, 'song artist': song.artist})
+        options.append(tracklist)
+
+    return options
+
+
+def get_songs_to_spell_word(word):
+    '''search through db and api for songs with single letter or phonetic titles that spell out a given word'''
+
     acronym = []
 
     word = search_helpers.remove_punctuation(word).lower()
-    for let in word:
-        if let == "c":
+    for lett in word:
+        if lett == "c":
             char = 'see'
-        elif let == "l":
+        elif lett == "l":
             char = 'elle'
-        elif let == "p":
+        elif lett == "p":
             char = 'pea'
-        elif let == "t":
+        elif lett == "t":
             char = 'tea'
         else:
-            char = let
-        char_choice = search_helpers.adds_punctuation(char) 
-        char_choice += search_helpers.adds_punctuation(char.upper())
-        char_choice += search_helpers.adds_punctuation(char.lower())
+            char = lett
+
+        char_choice = []
+        ## create a collection of search options just like for a regular word    
         char_choice.append(char)
-        char_choice.append(char.lower())
         char_choice.append(char.upper())
-
-        opts = Track.query.filter(Track.title.in_(char_choice)).all()
-        search_num = 0
-        while len(opts) < 1 and search_num < 10:
-            new = []
-            for opt in char_choice:
-                make_tracks(spot.search(q=opt, limit=50, offset=0))
-
-            # make_tracks(new)
-            opts = Track.query.filter(Track.title.in_(char_choice)).all()
-            search_num +=1 
+        char_choice += search_helpers.adds_punctuation(char) 
+        char_choice += search_helpers.adds_punctuation(char.upper())
+        
+        opts = get_songs_by_search_list(char_choice)
 
         if len(opts) > 1:
             acronym.append(choice(opts))
@@ -234,60 +253,20 @@ def search_spelling(word):
     return acronym
 
 
-def fill_song_opts(query):
-    '''searches through db, api, on repeat until tracks all found'''
-
-    search = search_tracks_by_title(query)
-
-    q_num = 0
-    while len(search) == 0:
-        new_search = search_api(query[0], q_num)
-        make_tracks(new_search)
-        search += search_tracks_by_title(query)
-        search += search_tracks_with_multi_artists(query)
-        q_num += 1
-
-        if q_num > 10:
-            break
-
-    return search
-
-def find_songs(phrase):
-    query_dict = search_helpers.make_search_options(phrase)
-        
-    tracks = []
-    for query in query_dict:
-        songs_opts = fill_song_opts(query_dict[query])
-        query_dict[query].append(songs_opts)
-        tracks.append(songs_opts)
-
-    return tracks
-
-## not in use - letting users pick songs instead
-def pick_songs(search_results):
-    '''pick a random option from the results to pick for playlist
-    TODO: check length to remove repeated phrases'''
-
-    if len(search_results) > 0:
-        return choice(search_results)
-
-def fill_chosen_songs(phrase, tracks):
-    '''takes the input phrase, 
-    the tracks chosen by the user
-    and the acronymps picked to spell out difficult words
-    
-    iterate through the track list
-    if the track title is in the input phrase move on
-    if not, run the check spelling and add the chosen songs to the track list
-    insert them where the blank space was for the missing word
+def add_songs_to_tracklist(phrase, tracks):
+    '''takes the input phrase, the tracks chosen by the user, adds songs to tracklist
+    if user neglected to pick, it skips, if they wanted it spelled, find acronyms
     '''
 
     track_list = []
     words = phrase.split()
     i = 0
+
+    ## there are always exactly as many tracks selected as words in the phrase, by design
+    ## user may have chosen a song, to spell it out, or to skip entirely
     for word in words:
         if tracks[i] == 'standin':
-            acronym = search_spelling(word)
+            acronym = get_songs_to_spell_word(word)
             for song in acronym:
                 track_list.append(song)
         elif tracks[i] == 'skip':
@@ -299,23 +278,17 @@ def fill_chosen_songs(phrase, tracks):
     return track_list
 
 
-def make_playlist(phrase, tracks, author):
+def make_spot_playlist(phrase, tracks, author_id):
     '''takes in a given phrase and makes a spotify playlist full of songs
-    currently the first word from title spells out the word
 
-    returns the playlist id
+    returns the playlist id for embedding
     '''
   
     ## cannot give spotify ownership to users - TODO:
     ## figure out how to give it to them
 
-    if author.spot_id == None:
-        id_ = app_id
-    else:
-        id_ = author.spot_id
-
-    new = spot_user.user_playlist_create(id_, phrase)
-    playlist = create_playlist(new['id'], phrase, author.user_id)
+    new = spot_user.user_playlist_create(app_id, phrase)
+    playlist = create_playlist(new['id'], phrase, author_id)
 
     play_fs = [playlist]
     for track in tracks:
@@ -329,16 +302,9 @@ def make_playlist(phrase, tracks, author):
     return playlist.play_id
 
 
-## function for searching through the db for playlists featuring keywords
-## looks through track title and artists
-def search_db(query):
-    '''searches through playlist db for query keywords
-
-    SELECT name FROM playlists AS P
-    JOIN feats AS f ON p.play_id=f.play_id
-    JOIN tracks AS t ON f.track_id=t.track_id
-    WHERE t.title LIKE '%keyword%' OR t.artist LIKE '%keyword%'
-    '''
+'''## functions for user interaction'''
+def get_play_by_track_keywords(query):
+    '''searches through db for query keywords'''
 
     play_q = db.session.query(Playlist)
     join_feat = play_q.join(Feat, Playlist.play_id==Feat.play_id)
@@ -349,30 +315,30 @@ def search_db(query):
         (Track.artist.like(f'%{query.title()}%')))
     
     results = where.all()
-    final = []
+    show = []
 
     if len(results) > 0:
         for item in results:
             author = User.query.get(item.creator_id)
-            final.append([item.play_id, item.name, author.name])
-    else:
-        final.append(["None", "No results", "Community"])
+            show.append({'play id': item.play_id, 'play name': item.name, 'author name': author.name})
 
-    return final
+    return show
 
-def top5_plays():
+
+def get_top5():
+    '''queries database for current 5 most liked playlists
+    returns the id, name, author name, and hype score for each in a list of dicts'''
+
     playlists = db.session.query(Playlist).order_by('hype').all()
 
     top5 = []
-    for play in playlists:
-        top5.append([play.play_id, play.name, play.author.name, play.hype])
+    for play in playlists[-1:-6:-1]:
+        top5.append({'play id': play.play_id, 'play name': play.name, 'author name': play.author.name, 'hype': play.hype})
 
-    return top5[-1:-6:-1]
+    return top5
 
-## function for letting users like a playlist
-## checks that they're logged in, not the author, and haven't liked it already
-## also adds hype to playlist
-def make_like(user_id, playlist_id):
+
+def like_playlist(user_id, playlist_id):
     '''checks that the user didn't author the playlist
     checks that the user hasn't already liked the playlist
     checks that the user is logged in
@@ -398,22 +364,21 @@ def make_like(user_id, playlist_id):
                 db.session.commit()
                 return "Liked!"
 
-## finds signed in users created and liked playlists for display
-def show_plays(user_id):
+
+## TODO: retest out different join methods make one db query, and one for loop
+def show_user_plays(user_id):
     '''creates a dictionary of likes and creations
     for a given user'''
 
-    playlists = {}
-    playlists['created'] = Playlist.query.filter(Playlist.creator_id==user_id).all()
-    playlists['liked'] = db.session.query(Playlist).join(Likes, Playlist.play_id==Likes.play_id).filter(Likes.user_id==user_id).all()
+    plays = Playlist.query.filter(Playlist.creator_id==user_id).all()
+    user = User.query.get(user_id)
 
     show = {'created': [], 'liked': []}
-    for playlist in playlists['created']:
-        show['created'].append([playlist.play_id, playlist.name])
-
-    for playlist in playlists['liked']:
-        author = User.query.get(playlist.creator_id)
-        show['liked'].append([playlist.play_id, playlist.name, author.name])
+    for playlist in plays:
+        show['created'].append({'play id': playlist.play_id, 'play name': playlist.name})
+    
+    for play in user.likes:
+        show['liked'].append({'play id': play.play_id, 'play name': Playlist.query.get(play.play_id).name, 'author name': Playlist.query.get(play.play_id).author.name})
 
     return show
 
@@ -421,3 +386,35 @@ def show_plays(user_id):
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)
+
+
+
+'''
+# results = spot.search(q='',type='track',limit=50)
+songs = results['tracks']['items']
+for song in songs:
+    song['uri']
+    song['name']
+    song['artists'][0]['name']
+
+# tracks = spot.playlist_tracks(playlist_id)
+
+# new = spot_user.user_playlist_create(app_id, 'play_name')
+new playlist redirects to a new page, set it specifically
+play more with the redirect and authorization, it's confusing
+'''
+
+'''
+SELECT name FROM playlists AS P
+JOIN feats AS f ON p.play_id=f.play_id
+JOIN tracks AS t ON f.track_id=t.track_id
+WHERE t.title LIKE '%keyword%' OR t.artist LIKE "%keyword%"
+'''
+
+## not in use - letting users pick songs instead
+# def pick_songs(search_results):
+#     '''pick a random option from the results to pick for playlist
+#     TODO: check length to remove repeated phrases'''
+
+#     if len(search_results) > 0:
+#         return choice(search_results)

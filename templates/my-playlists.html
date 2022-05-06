@@ -7,7 +7,7 @@
 <h3 class="row">authored playlists</h3>
 <ul class="container" id="authored">
     {% for play in created %}
-        <li class="row" id={{ play[0] }}>{{ play[1] }}</li>
+        <li class="row" id={{ play['play id'] }}>{{ play['play name'] }}</li>
     {% endfor %} 
 </ul>
 {% endblock %}
@@ -16,7 +16,7 @@
 <h3 class="row">Liked playlists</h3>
 <ul class="container" id="liked">
     {% for play in liked %} 
-        <li class="row" id={{ play[0] }}>{{ play[1] }} by {{ play[2] }}</li>
+        <li class="row" id={{ play['play id'] }}>{{ play['play name'] }} by {{ play['author name'] }}</li>
     {% endfor %}
 </ul>
 {% endblock %}

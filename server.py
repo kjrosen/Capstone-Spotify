@@ -12,15 +12,15 @@ app = Flask(__name__)
 model.connect_to_db(app)
 
 app.secret_key = os.environ['SECRET_KEY']
-ADMIN = model.User.query.get(1)
+# ADMIN = model.User.query.get(1)
 
 @app.route('/')
 def homepage():
+    '''homepage of the app, shows most popular playlists'''
 
     session['login'] = session.get('login', False)
-    top5 = crud.top5_plays()
+    top5 = crud.get_top5()
     
-    # return render_template('home.html')
     return render_template('home.html', top5=top5)
 
 
@@ -29,28 +29,18 @@ def homepage():
 def sign_in():
     '''logs the user in or redirects'''
 
-    ##gets email and password from from
     in_email = request.form.get('email')
     in_pass = request.form.get('password')
 
-    ##log in checks database information
     user_id = crud.log_in(in_email, in_pass)
-
+    
     if user_id == False:
         flash('Wrong password and/or email')
-        return redirect('/')
     else:
         session['login'] = user_id
-
-        return redirect('/auth')
-
-@app.route('/auth')
-def authenticate_spotify_acct():
-    '''signs a user into their spotify account'''
+        ##TODO: remember this is still here
+        # return redirect('/auth')
     
-    url = request.url
-    crud.new_spot_token(url)
-
     return redirect('/')
 
 
@@ -66,15 +56,17 @@ def sign_up():
 
     if user_id == False:
         flash('Email taken')
-        return redirect('/')
     else:
         session['login'] = user_id
-        return redirect('/auth')
+        ##TODO: remember this is here
+        # return redirect('/auth')
+    return redirect('/')
         
 
 @app.route('/logout')
 def logout():
     '''logs a user out'''
+
     session['login'] = False
 
     return redirect('/')        
@@ -85,20 +77,19 @@ def check_user():
     '''checks that the users' information is accurate before changing info'''
     
     ##gets email and password from from
-    in_pass = request.json.get('pw')
+    input_pass = request.json.get('pw')
 
-    ##log in checks database information
+    ##login checks database information
     user = model.User.query.get(session['login'])
 
-    if user.pw == in_pass:
+    if user.pw == input_pass:
         return 'true'
 
 
 @app.route('/update', methods=['POST'])
 def update_user_info():
     '''updates the user's name or password
-    emails cannot be updated'''
-
+    emails cannot be updated at this time TODO: add extra checks to make emails changable'''
 
     new_pw = request.json.get('pw')
     new_name = request.json.get('name')
@@ -120,33 +111,25 @@ def choose_songs():
 
     name = request.json.get('new')
 
-    songs = crud.find_songs(name)
-    
-    options = []
-    for collection in songs:
-        tracks = []
-        if len(collection) == 0:
-            tracks.append(['standin', 'No options found', 'Gotta spell it out'])
-        else:
-            for song in collection:
-                tracks.append([song.track_id, song.title, song.artist])
-        options.append(tracks)
+    options = crud.get_tracklist_opts(name)
 
     return jsonify(options)
+
 
 @app.route('/make.json', methods=['POST'])
 def make_playlist():
 
     if session['login'] == False:
-        author = ADMIN
+        author_id = 1
     else:
-        author = model.User.query.get(session['login'])
+        author_id = session['login']
+        # print(type(author_id))
+
     phrase = request.json.get('phrase')
     tracks = request.json.get('tracks')
-    tracks.pop()
 
-    tracklist = crud.fill_chosen_songs(phrase, tracks)
-    playlist = crud.make_playlist(phrase, tracklist, author)
+    tracklist = crud.add_songs_to_tracklist(phrase, tracks)
+    playlist = crud.make_spot_playlist(phrase, tracklist, author_id)
 
     return playlist
 
@@ -156,7 +139,7 @@ def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
 
     query = request.args.get('query')
-    result = crud.search_db(query)
+    result = crud.get_play_by_track_keywords(query)
 
     return jsonify(result)
 
@@ -168,7 +151,7 @@ def like_play():
 
     playlist_id = request.json.get('playlist_id')
 
-    response = crud.make_like(session['login'], playlist_id)
+    response = crud.like_playlist(session['login'], playlist_id)
     
     return response
 
@@ -179,7 +162,7 @@ def show_user_playlists():
     sends them to fill the my-playlists page'''
 
     user_id = session['login']
-    playlists = crud.show_plays(user_id)
+    playlists = crud.show_user_plays(user_id)
     
     return render_template('my-playlists.html',
                             liked=playlists['liked'],
@@ -189,3 +172,14 @@ def show_user_playlists():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
+
+
+
+# @app.route('/auth')
+# def authenticate_spotify_acct():
+#     '''signs a user into their spotify account'''
+    
+#     url = request.url
+#     crud.new_spot_token(url)
+
+#     return redirect('/')

@@ -2,7 +2,6 @@
 
 ## import needed python files, and os for commands
 import os
-
 import crud
 import model
 from server import app
@@ -11,8 +10,7 @@ import json
 ## give the commands to drop and recreate db
 os.system('dropdb music')
 os.system('createdb music')
-# os.system('source secrets.sh')
-# os.system('psql music < data/musicBack.sql')
+
 
 model.connect_to_db(app)
 model.db.create_all()
@@ -94,7 +92,7 @@ def make_feats(play_id):
 
 
 ## takes playlists from admin spotify account and creates tracks and feats for them
-all_plays = crud.spot2.user_playlists(crud.app_id)
+all_plays = crud.spot_user.user_playlists(crud.app_id)
 def fill_playlists_and_feats(playlists=all_plays):
     '''fills the music db with each playlist, iterates through the results to make playlists out of them'''
 
@@ -116,6 +114,8 @@ fill_playlists_and_feats()
 all_plays = model.Playlist.query.all()
 for play in all_plays:
     make_feats(play.play_id)
+
+    
 
 # file = open('data/plays.json').read()
 # all_plays = json.loads(file)

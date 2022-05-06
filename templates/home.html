@@ -3,13 +3,13 @@
 {% block head %}Make a nonsense Spotify playlist{% endblock %} 
 
 {% block leftTop %}
-	<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/{{ top5[0][0] }}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+	<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/{{ top5[0]['play id'] }}?utm_source=generator" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 {% endblock %} 
 {% block leftLow %}
 	<h3 class="row">Most Popular Right Now</h3>
 	<ul class="container" id="popular">
 		{% for play in top5 %} 
-			<li class="row" id={{ play[0] }}>{{ play[1] }} by {{ play[2] }} liked by {{ play[3] }}</li>
+			<li class="row" id={{ play['play id'] }}>{{ play['play name'] }} by {{ play['author name'] }} liked by {{ play['hype'] }}</li>
 		{% endfor %}
 	</ul>
 {% endblock %}

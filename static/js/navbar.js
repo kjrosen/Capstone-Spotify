@@ -37,11 +37,9 @@ ex.innerText = 'X'
 ex.setAttribute('type', 'button')
 
 
-// for main page's Popular Playlists list
-const popPlays = document.querySelectorAll('#popular');
+// for search results always fill on top left list
 const results = document.createElement('ul');
 results.setAttribute('class', 'container');
-
 
 //the feature that lets listed playlists be embedable
 // search results and also the most popular all populate in left block
@@ -79,8 +77,23 @@ function embedListedPlay(list_box=results) {
 	}
 }
 
+// on homepage, lists are present in popPlays
+const popPlays = document.querySelectorAll('#popular');
+if (popPlays.length > 1) {
 embedListedPlay(popPlays[0]);
+}
 
+// on myplaylists, lists are already present in authored and liked
+const authoredPlays = document.querySelectorAll('#authored');
+if (authoredPlays.length > 0) {
+	embedListedPlay(authoredPlays[0]);
+}
+
+// use embedListedPlay if they exist
+const likedPlays = document.querySelectorAll('#liked');
+if (likedPlays.length > 0) {
+	embedListedPlay(likedPlays[0]);
+}
 
 // on click a make bar appears in the right bar
 maker.addEventListener('click', (evt) => {
@@ -115,19 +128,23 @@ maker.addEventListener('click', (evt) => {
 				const skip = document.createElement('option');
 				skip.setAttribute('value', 'skip');
 				skip.innerText = 'Skip this song';
+				const spell = document.createElement('option');
+				spell.setAttribute('value', 'standin');
+				spell.innerText = 'Spell it out instead';
 
 
 				// create a drop down menu for each song choice
 				for (const query of listedSongs) {
 					const track = document.createElement('select');
 					track.setAttribute('class', 'row');
+          			track.appendChild(skip.cloneNode(true));
+					track.appendChild(spell.cloneNode(true));
 					songPicker.appendChild(track);
-          			songPicker.lastChild.appendChild(skip.cloneNode(true));
 
 					for (const opt of query) {
 						const option = document.createElement('option');
-						option.setAttribute('value', opt[0]);
-						option.innerText = `${ opt[1]} by ${ opt[2] }`;
+						option.setAttribute('value', opt['track_id']);
+						option.innerText = `${ opt['song title']} by ${ opt['song artist'] }`;
 						songPicker.lastChild.appendChild(option);
 					}
 				}
@@ -196,8 +213,13 @@ searcher.addEventListener('click', (evt) => {
 				
 				listBox.innerHTML = `<h3 col="row">${queryString}</h3>`;
 				results.innerHTML = ''
-				for (const item of resLists) {
-					results.insertAdjacentHTML('beforeend', `<li class="row" id="${item[0]}">${item[1]} by ${item[2]}</li>`);
+
+				if (resLists.length > 0) {
+					for (const item of resLists) {
+						results.insertAdjacentHTML('beforeend', `<li class="row" id="${item['play id']}">${item['play name']} by ${item['author name']}</li>`);
+					}
+				} else {
+					results.insertAdjacentHTML('beforeend', 'No results');
 				}
 				
 				listBox.appendChild(results);
@@ -318,19 +340,4 @@ if (adjuster.length > 0){
 				});
 		});
 	});
-}
-
-
-// on myplaylists, lists are already present
-const authoredPlays = document.querySelectorAll('#authored');
-if (authoredPlays.length > 0) {
-	embedListedPlay(authoredPlays[0]);
-}
-
-
-
-// use embedListedPlay if they exist
-const likedPlays = document.querySelectorAll('#liked');
-if (likedPlays.length > 0) {
-	embedListedPlay(likedPlays[0]);
 }
