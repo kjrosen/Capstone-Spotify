@@ -1,18 +1,14 @@
 '''Flask Server for project'''
 
 from flask import Flask, render_template, request, redirect, session, flash, jsonify
-import jinja2
-import os
-
-import crud
-import model
-
+import jinja2, os
+import crud, model
 
 app = Flask(__name__)
 model.connect_to_db(app)
 
 app.secret_key = os.environ['SECRET_KEY']
-# ADMIN = model.User.query.get(1)
+
 
 @app.route('/')
 def homepage():
@@ -24,7 +20,7 @@ def homepage():
     return render_template('home.html', top5=top5)
 
 
-
+## account creation based view functions
 @app.route('/login', methods=['POST'])
 def sign_in():
     '''logs the user in or redirects'''
@@ -104,7 +100,34 @@ def update_user_info():
     return 'true'
 
 
+## account interaction based view functions
+@app.route('/mine')
+def show_user_playlists():
+    '''fetches the user's liked and created playlists
+    sends them to fill the my-playlists page'''
 
+    user_id = session['login']
+    playlists = crud.show_user_plays(user_id)
+    
+    return render_template('my-playlists.html',
+                            liked=playlists['liked'],
+                            created=playlists['created'],
+                            user_name=model.User.query.get(user_id).name)
+
+
+@app.route('/like', methods=['POST'])
+def like_play():
+    '''adds a like between the current user
+    and the current playlist, and up the playlists' hype'''
+
+    playlist_id = request.json.get('playlist_id')
+
+    response = crud.like_playlist(session['login'], playlist_id)
+    
+    return response
+
+
+## playlist creation based view functions
 @app.route('/pick.json', methods=['POST'])
 def choose_songs():
     '''search through the database to fill out the playlist'''
@@ -123,7 +146,6 @@ def make_playlist():
         author_id = 1
     else:
         author_id = session['login']
-        # print(type(author_id))
 
     phrase = request.json.get('phrase')
     tracks = request.json.get('tracks')
@@ -134,6 +156,7 @@ def make_playlist():
     return playlist
 
 
+## db search based view functions
 @app.route('/search.json')
 def search_playlists():
     '''search through the db for playlists featuring songs or artists'''
@@ -144,42 +167,7 @@ def search_playlists():
     return jsonify(result)
 
 
-@app.route('/like', methods=['POST'])
-def like_play():
-    '''adds a like between the current user
-    and the current playlist, and up the playlists' hype'''
-
-    playlist_id = request.json.get('playlist_id')
-
-    response = crud.like_playlist(session['login'], playlist_id)
-    
-    return response
-
-
-@app.route('/mine')
-def show_user_playlists():
-    '''fetches the user's liked and created playlists
-    sends them to fill the my-playlists page'''
-
-    user_id = session['login']
-    playlists = crud.show_user_plays(user_id)
-    
-    return render_template('my-playlists.html',
-                            liked=playlists['liked'],
-                            created=playlists['created'],
-                            user_name=model.User.query.get(user_id).name)
-
-
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
 
 
-
-# @app.route('/auth')
-# def authenticate_spotify_acct():
-#     '''signs a user into their spotify account'''
-    
-#     url = request.url
-#     crud.new_spot_token(url)
-
-#     return redirect('/')

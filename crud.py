@@ -22,7 +22,7 @@ auth = SpotifyOAuth(scope=scope)
 spot_user = spotipy.Spotify(auth_manager=auth)
 
 
-## functions to create new instances for each table
+'''## functions to create new instances for each table'''
 def create_track(track_id, title, artist):
     """take Spotify info and return a new track in local db."""
     
@@ -75,7 +75,7 @@ def create_user(name, email, pw, spot_id=None):
     return user
 
 
-## functions for creating an account management
+'''## functions for creating an account management'''
 def check_email(email):
     '''checks if email is already in db, returns list of user exists '''
 
@@ -114,19 +114,6 @@ def make_account(email, password, name):
         return new.user_id
     else: 
         return False
-
-
-##TODO: finish this
-# def new_spot_token(url):
-#     '''generate a new auth at account creation'''
-
-#     # token_info = auth.get_cached_token()
-#     res = auth.get_auth_response()
-#     code = auth.get_authorization_code(res)
-#     # code = auth.parse_response_code(url)
-#     token = auth.get_access_token(code, check_cache=False)
-
-#     return token
 
 
 '''## functions for creating playlists from user input phrases'''
@@ -288,6 +275,7 @@ def make_spot_playlist(phrase, tracks, author_id):
     ## figure out how to give it to them
 
     new = spot_user.user_playlist_create(app_id, phrase)
+
     playlist = create_playlist(new['id'], phrase, author_id)
 
     play_fs = [playlist]

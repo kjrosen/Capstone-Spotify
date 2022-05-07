@@ -10,6 +10,7 @@ const listBox = document.getElementById('left-top');
 const embedBox = document.getElementById('embed-box');
 
 let adjuster = document.querySelectorAll('#adjuster');
+// let connect = docuement.querySelectorAll('#connect');
 
 
 //the basic input form used by both maker and searcher
@@ -29,17 +30,18 @@ embedPlay.setAttribute('width', '100%');
 embedPlay.setAttribute('height', '380');
 embedPlay.setAttribute('frameBorder', '0');
 embedPlay.setAttribute('allowfullscreen', '');
-// embedPlay.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture')
+embedPlay.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture')
+
 
 //and X-out options for search results to clear the field
 const ex = document.createElement('button');
 ex.innerText = 'X'
 ex.setAttribute('type', 'button')
 
-
 // for search results always fill on top left list
 const results = document.createElement('ul');
 results.setAttribute('class', 'container');
+
 
 //the feature that lets listed playlists be embedable
 // search results and also the most popular all populate in left block
@@ -77,11 +79,13 @@ function embedListedPlay(list_box=results) {
 	}
 }
 
+
 // on homepage, lists are present in popPlays
 const popPlays = document.querySelectorAll('#popular');
 if (popPlays.length > 1) {
 embedListedPlay(popPlays[0]);
 }
+
 
 // on myplaylists, lists are already present in authored and liked
 const authoredPlays = document.querySelectorAll('#authored');
@@ -89,11 +93,13 @@ if (authoredPlays.length > 0) {
 	embedListedPlay(authoredPlays[0]);
 }
 
+
 // use embedListedPlay if they exist
 const likedPlays = document.querySelectorAll('#liked');
 if (likedPlays.length > 0) {
 	embedListedPlay(likedPlays[0]);
 }
+
 
 // on click a make bar appears in the right bar
 maker.addEventListener('click', (evt) => {
@@ -341,3 +347,13 @@ if (adjuster.length > 0){
 		});
 	});
 }
+
+
+// //if the user is already logged in they can connect to spotify to be invited to collaborate on their playlists
+// if (connect.length > 0){
+// 	connect = connect[0];
+
+// 	connect.addEventListener('click', (evt) => {
+		
+// 	});
+// }
