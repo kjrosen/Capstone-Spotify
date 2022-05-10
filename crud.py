@@ -212,10 +212,11 @@ def get_songs_to_spell_word(word):
 
     acronym = []
 
-    word = search_helpers.remove_punctuation(word).lower()
+    word = search_helpers.remove_punctuation(word)
+    word = word.lower()
     for lett in word:
         if lett == "c":
-            char = 'see'
+            char = 'seed'
         elif lett == "l":
             char = 'elle'
         elif lett == "p":
@@ -225,12 +226,15 @@ def get_songs_to_spell_word(word):
         else:
             char = lett
 
+        print('\n\n\n\n\n\n\n', char)
         char_choice = []
         ## create a collection of search options just like for a regular word    
         char_choice.append(char)
         char_choice.append(char.upper())
+        char_choice.append(char.title())
         char_choice += search_helpers.adds_punctuation(char) 
         char_choice += search_helpers.adds_punctuation(char.upper())
+        char_choice += search_helpers.adds_punctuation(char.title())
         
         opts = get_songs_by_search_list(char_choice)
 
@@ -343,8 +347,8 @@ def like_playlist(user_id, playlist_id):
         if playlist.creator_id == user_id:
             return "You made this playlist"
         else:
-            if Likes.query.get(str(user_id)+playlist_id):
-                return "You already liked this"
+            if Likes.query.get(str(user_id)+str(playlist_id)):
+                return "You already liked this. Unlike?"
             else:
                 like = create_like(user_id, playlist_id)
                 db.session.add(like)
@@ -352,6 +356,16 @@ def like_playlist(user_id, playlist_id):
                 db.session.commit()
                 return "Liked!"
 
+def unlike_playlist(user_id, playlist_id):
+    ''''''
+
+    playlist = Playlist.query.get(playlist_id)
+
+    like = Likes.query.get(str(user_id)+str(playlist_id));
+    db.session.delete(like)
+    playlist.hype -= 1
+    db.session.commit()
+    return "Unliked!"
 
 ## TODO: retest out different join methods make one db query, and one for loop
 def show_user_plays(user_id):

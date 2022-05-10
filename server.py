@@ -127,6 +127,18 @@ def like_play():
     return response
 
 
+@app.route('/unlike', methods=['POST'])
+def unlike_play():
+    '''removes a like between the current user and the current playlist
+    lowers the playlist's hype'''
+
+    playlist_id = request.json.get('playlist_id')
+
+    response = crud.unlike_playlist(session['login'], playlist_id)
+    
+    return response
+
+
 ## playlist creation based view functions
 @app.route('/pick.json', methods=['POST'])
 def choose_songs():

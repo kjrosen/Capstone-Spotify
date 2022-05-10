@@ -6,11 +6,42 @@ body {
 
 #navbar {
     text-align: center;
+    padding: 1%;
+}
+a visited{
+    color:rgb(223, 216, 222);
+    text-decoration: none;
+}
+a:hover{
+    color:rgb(223, 216, 222);
+    text-decoration: none;
+}
+a {
+    color:rgb(223, 216, 222);
+    text-decoration: none;
 }
 
 #header {
     text-align: center;
     background-color:rgb(0, 173, 84);
+    font-size: 2em;
+    padding: 1%;
+}
+
+#header a{
+    color:rgb(0, 17, 0);
+}
+#header a visited{
+    color:rgb(0, 17, 0);
+    text-decoration: none;
+}
+#header a:hover{
+    color:rgb(0, 17, 0);
+    text-decoration: none;
+}
+#header a {
+    color:rgb(0, 17, 0);
+    text-decoration: none;
 }
 
 #left {
@@ -20,3 +51,10 @@ body {
 #right {
     background-color:rgb(0, 17, 0);
 }
+
+button {
+    margin: 2%;
+}
+
+
+

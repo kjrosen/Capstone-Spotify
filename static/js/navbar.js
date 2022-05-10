@@ -71,8 +71,24 @@ function embedListedPlay(list_box=results) {
 						'Content-Type': 'application/json'},
 					})
 						.then(response => response.text())
-						.then(response_ => {
-							alert(response_);
+						.then(likeConfirm => {
+							// alert(response_);
+							if (likeConfirm == 'You already liked this. Unlike?') {
+								if (confirm(likeConfirm)) {
+									fetch('/unlike', {
+										method: 'POST',
+										body: JSON.stringify(play),
+										headers: {
+											'Content-Type': 'application/json'},
+										})
+										.then(response => response.text())
+										.then(unlikeConfirm => {
+											alert(unlikeConfirm);
+										});
+									}
+								} else {
+									alert(likeConfirm);
+								}
 						});
 			});
 		});

@@ -10,7 +10,6 @@ function InputBox(props) {
 	);
 }
 
-
 function LogBox() {
 	return (
 		<form action='/join' method='POST' class='container' id='login'>
@@ -49,18 +48,6 @@ const SignBoxes = (
 	</div>
 );
 
-
-function SendPlaylistPhrase() {
-
-}
-
-
-function SendDBQuery() {
-
-
-}
-
-
 function EmbedPlay(props) {
 	return (
 		<iframe src={props.playId} style='border-radius:12px' width='100%' height='380' frameBorder='0' allowFullScreen='' allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture' />
@@ -68,19 +55,23 @@ function EmbedPlay(props) {
 }
 
 
+const ListPlaylists = (props) => {
+	const []
+}
 function PlaylistListItem(props) {
 	return (
 		<li id={props.playId}>{props.name} by {props.userName}</li>
 	);
 }
 
-function ListedPlaylists(props) {
+
+function SendPlaylistPhrase() {
 
 }
-
-
-
-
+function SendDBQuery() {
+}
+function ListedPlaylists(props) {
+}
 
 
 
