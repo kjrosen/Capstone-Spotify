@@ -56,13 +56,16 @@ function EmbedPlay(props) {
 
 
 const ListPlaylists = (props) => {
-	const []
+	const playlists = [];
+	//TODO: how am I getting the playlist info
+	for (const play of jsonResponse) {
+		playlists.push(
+			<li id={play.playId}>{play.name} by {play.userName}</li>
+			);
+	}
 }
-function PlaylistListItem(props) {
-	return (
-		<li id={props.playId}>{props.name} by {props.userName}</li>
-	);
-}
+
+
 
 
 function SendPlaylistPhrase() {
@@ -91,3 +94,12 @@ const embeddedPlay = <EmbedPlay playId='' />
 //embeddedPlay src  will always be dependent on
 //1 - json data from makeBox fetch event OR
 //2 - li id info from any of the listed playlist events
+
+
+
+
+// function PlaylistListItem(props) {
+// 	return (
+// 		<li id={props.playId}>{props.name} by {props.userName}</li>
+// 	);
+// }

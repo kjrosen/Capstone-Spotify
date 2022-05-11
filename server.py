@@ -139,6 +139,16 @@ def unlike_play():
     return response
 
 
+@app.route('/delete', methods=['POST'])
+def delete_playlist():
+    '''removes a playlist from the db'''
+
+    playlist_id = request.json.get('playlist_id')
+
+    response = crud.remove_playlist(playlist_id)
+
+    return response
+
 ## playlist creation based view functions
 @app.route('/pick.json', methods=['POST'])
 def choose_songs():

@@ -98,15 +98,48 @@ function embedListedPlay(list_box=results) {
 
 // on homepage, lists are present in popPlays
 const popPlays = document.querySelectorAll('#popular');
-if (popPlays.length > 1) {
-embedListedPlay(popPlays[0]);
+if (popPlays.length > 0) {
+	embedListedPlay(popPlays[0]);
 }
 
 
 // on myplaylists, lists are already present in authored and liked
 const authoredPlays = document.querySelectorAll('#authored');
 if (authoredPlays.length > 0) {
-	embedListedPlay(authoredPlays[0]);
+	// embedListedPlay(authoredPlays[0]);
+
+	const plays = authoredPlays[0].children;
+	for (const play of plays) {
+		play.addEventListener('click', (evt) => {
+			const playlist = evt.target.id;
+			
+			const smallPlay = embedPlay.cloneNode(true);
+			smallPlay.setAttribute('src', `https://open.spotify.com/embed/playlist/${ playlist }?utm_source=generator`);
+			embedBox.innerHTML = ''
+			embedBox.appendChild(smallPlay);
+			embedBox.insertAdjacentHTML('beforeend', '<button>Delete Playlist</button>');
+		
+			const del = document.querySelector('#embed-box button');
+
+			del.addEventListener('click', (evt) => {
+				evt.preventDefault();
+
+				if (confirm("You can't undo this")){
+					const play = {playlist_id: playlist};
+					fetch('/delete', {
+						method: 'POST',
+						body: JSON.stringify(play),
+						headers: {
+							'Content-Type': 'application/json'},
+						})
+							.then(response => response.text())
+							.then(delResponse => {
+								alert(delResponse);
+								})
+					}
+			});
+		});
+	}
 }
 
 
@@ -365,11 +398,4 @@ if (adjuster.length > 0){
 }
 
 
-// //if the user is already logged in they can connect to spotify to be invited to collaborate on their playlists
-// if (connect.length > 0){
-// 	connect = connect[0];
 
-// 	connect.addEventListener('click', (evt) => {
-		
-// 	});
-// }

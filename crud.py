@@ -357,7 +357,8 @@ def like_playlist(user_id, playlist_id):
                 return "Liked!"
 
 def unlike_playlist(user_id, playlist_id):
-    ''''''
+    '''deletes a like item from the db
+    lowers the playlist's hype score as well'''
 
     playlist = Playlist.query.get(playlist_id)
 
@@ -366,6 +367,17 @@ def unlike_playlist(user_id, playlist_id):
     playlist.hype -= 1
     db.session.commit()
     return "Unliked!"
+
+
+def remove_playlist(playlist_id):
+    '''deletes a playlist from the table'''
+
+    playlist = Playlist.query.get(playlist_id)
+
+    db.session.delete(playlist)
+    db.session.commit()
+
+    return "Playlist deleted"
 
 ## TODO: retest out different join methods make one db query, and one for loop
 def show_user_plays(user_id):
@@ -389,34 +401,3 @@ if __name__ == '__main__':
     from server import app
     connect_to_db(app)
 
-
-
-'''
-# results = spot.search(q='',type='track',limit=50)
-songs = results['tracks']['items']
-for song in songs:
-    song['uri']
-    song['name']
-    song['artists'][0]['name']
-
-# tracks = spot.playlist_tracks(playlist_id)
-
-# new = spot_user.user_playlist_create(app_id, 'play_name')
-new playlist redirects to a new page, set it specifically
-play more with the redirect and authorization, it's confusing
-'''
-
-'''
-SELECT name FROM playlists AS P
-JOIN feats AS f ON p.play_id=f.play_id
-JOIN tracks AS t ON f.track_id=t.track_id
-WHERE t.title LIKE '%keyword%' OR t.artist LIKE "%keyword%"
-'''
-
-## not in use - letting users pick songs instead
-# def pick_songs(search_results):
-#     '''pick a random option from the results to pick for playlist
-#     TODO: check length to remove repeated phrases'''
-
-#     if len(search_results) > 0:
-#         return choice(search_results)

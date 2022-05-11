@@ -6,24 +6,24 @@
 <h2 class="row">Welcome, {{ user_name }}</h2>
 <h3 class="row">authored playlists</h3>
 <ul class="container" id="authored">
-    {% for play in created %}
-        <li class="row" id={{ play['play id'] }}>{{ play['play name'] }}</li>
-    {% endfor %} 
+	{% for play in created %}
+		<li class="row" id={{ play['play id'] }}>{{ play['play name'] }}</li>
+	{% endfor %} 
 </ul>
 {% endblock %}
 
 {% block leftLow %}
 <h3 class="row">Liked playlists</h3>
 <ul class="container" id="liked">
-    {% for play in liked %} 
-        <li class="row" id={{ play['play id'] }}>{{ play['play name'] }} by {{ play['author name'] }}</li>
-    {% endfor %}
+	{% for play in liked %} 
+		<li class="row" id={{ play['play id'] }}>{{ play['play name'] }} by {{ play['author name'] }}</li>
+	{% endfor %}
 </ul>
 {% endblock %}
 
 {% block foot %} 
-    <div class="container" id="memberNav">
-        <span class="row" id="adjuster">account details</span>
-        <!-- <span class="row" id="connect">connect to spotify</span> -->
-    </div>
+	<div class="container" id="memberNav">
+		<span class="row" id="adjuster">account details</span>
+		<!-- <span class="row" id="connect">connect to spotify</span> -->
+	</div>
 {% endblock %}

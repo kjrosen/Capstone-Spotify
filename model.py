@@ -9,7 +9,7 @@ def connect_to_db(app, db_name="music"):
 
     ## basic install requirements from sqlalchemy docs
     app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql:///{db_name}"
-    app.config["SQLALCHEMY_ECHO"] = True
+    app.config["SQLALCHEMY_ECHO"] = False
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     ## initializes connection between the Flask app and the database
@@ -27,6 +27,7 @@ class Track(db.Model):
     track_id = db.Column(db.String, primary_key=True)
     title = db.Column(db.String, nullable=False)
     artist = db.Column(db.String, nullable=False)
+
 
     feats = db.relationship('Feat', back_populates='track')
 
@@ -69,8 +70,8 @@ class Playlist(db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     hype = db.Column(db.Integer)
 
-    feats = db.relationship('Feat', back_populates='playlist')
-    likes = db.relationship('Likes', back_populates='playlist')
+    feats = db.relationship('Feat', back_populates='playlist', cascade='all, delete')
+    likes = db.relationship('Likes', back_populates='playlist', cascade='all, delete')
     author = db.relationship('User', back_populates='playlists')
 
     def __repr__(self):
@@ -116,6 +117,27 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User name={self.name} user_id={self.user_id}>'
+
+
+def example_data():
+    '''create some sample data'''
+
+    Feat.query.delete()
+    Likes.query.delete()
+    Playlist.query.delete()
+    User.query.delete()
+    Track.query.delete()
+    
+    user1 = User(user_id=1, spot_id=None, name="Admin", email="hbplaymaker@gmail.com", pw="bossbaby")
+    user2 = User(user_id=2, spot_id=None, name="The Boss", email="kayejrosen@gmail.com", pw="mommy")
+    track = Track(track_id="6pffNpEoNC6eqqN8lVg57F", title="Testing 1, 2, 3", artist="Barenaked Ladies")
+    play1 = Playlist(play_id="0s5hv6JMm6wbuOhAQ8vuau", name="Hello World !", creator_id=2, hype=0)
+    play2 = Playlist(play_id="6ZApK6rZbtqQzH2eGTIaPd", name="i need a win", creator_id=1, hype=1)
+    feat = Feat(feat_id=1, track_id="6pffNpEoNC6eqqN8lVg57F", play_id="0s5hv6JMm6wbuOhAQ8vuau")
+    like = Likes(like_id='16ZApK6rZbtqQzH2eGTIaPd', user_id=1, play_id="6ZApK6rZbtqQzH2eGTIaPd")
+
+    db.session.add_all([user1, user2, track, play1, play2, feat, like])
+    db.session.commit()
 
 
 if __name__ == "__main__":
