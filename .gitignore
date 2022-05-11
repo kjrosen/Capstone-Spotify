@@ -5,4 +5,4 @@ env
 *.cache
 data
 Extra/
-*_tests.*
+# *_tests.*
