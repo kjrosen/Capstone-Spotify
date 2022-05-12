@@ -134,9 +134,9 @@ def example_data():
     play1 = Playlist(play_id="0s5hv6JMm6wbuOhAQ8vuau", name="Hello World !", creator_id=2, hype=0)
     play2 = Playlist(play_id="6ZApK6rZbtqQzH2eGTIaPd", name="i need a win", creator_id=1, hype=1)
     feat = Feat(feat_id=1, track_id="6pffNpEoNC6eqqN8lVg57F", play_id="0s5hv6JMm6wbuOhAQ8vuau")
-    like = Likes(like_id='16ZApK6rZbtqQzH2eGTIaPd', user_id=1, play_id="6ZApK6rZbtqQzH2eGTIaPd")
+    # like = Likes(like_id='16ZApK6rZbtqQzH2eGTIaPd', user_id=1, play_id="6ZApK6rZbtqQzH2eGTIaPd")
 
-    db.session.add_all([user1, user2, track, play1, play2, feat, like])
+    db.session.add_all([user1, user2, track, play1, play2, feat])
     db.session.commit()
 
 

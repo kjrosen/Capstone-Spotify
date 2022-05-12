@@ -397,5 +397,3 @@ if (adjuster.length > 0){
 	});
 }
 
-
-
