@@ -3,7 +3,7 @@ from server import app
 from model import connect_to_db, db, example_data
 from flask import session
 
-class FlaskTests(TestCase):
+class FlaskTests_NoAccount(TestCase):
 
     def setUp(self):
         '''to do before each test'''
@@ -11,13 +11,17 @@ class FlaskTests(TestCase):
         app.config['SECRET_KEY'] = 'key'
         self.client = app.test_client()
         
-
         connect_to_db(app, 'testdb')
         db.create_all()
         example_data()
 
     def tearDown(self):
         '''to do after each test, ##TODO'''
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['login'] = False
+
 
     def test_homepage_route(self):
         '''test that the homepage is rendering'''
@@ -31,8 +35,8 @@ class FlaskTests(TestCase):
 
         result = self.client.post('/login',
                                     data={
-                                        'email': 'hbplaymaker@gmail.com', 
-                                        'password': 'bossbaby'},
+                                        'email': 'user1@gmail.com', 
+                                        'password': 'one'},
                                     follow_redirects=True)
                                     
         self.assertIn(b'<a class="col" href="/mine">My Playlists</a>', result.data)
@@ -44,7 +48,7 @@ class FlaskTests(TestCase):
 
         result_fail = self.client.post('/join', 
                                         data={
-                                            'email':'hbplaymaker@gmail.com', 
+                                            'email':'user1@gmail.com', 
                                             'password':'1234',
                                             'name':'FailTester'},
                                         follow_redirects=True)
@@ -60,10 +64,51 @@ class FlaskTests(TestCase):
         self.assertIn(b'<a class="col" href="/mine">My Playlists</a>', result_success.data)
 
 
+class FlaskTests_LoggedIn(TestCase):
+    
+    def setUp(self):
+        '''to do before each test'''
+        app.config['TESTING'] = True
+        app.config['SECRET_KEY'] = 'key'
+        self.client = app.test_client()
+        
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['login'] = 1
+
+        connect_to_db(app, 'testdb')
+        db.create_all()
+        example_data()
+
+    def tearDown(self):
+        '''to do after each test, ##TODO'''
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['login'] = False
+
+
     def test_logout_route(self):
         '''tests that a session data and html updates with logout'''
 
-        
+        result = self.client.get('/logout', follow_redirects=True)
+        self.assertNotIn(b'<a class="col" href="/mine">My Playlists</a>', result.data)
+
+    def test_verify_route(self):
+        '''sets the session data to a set test user
+        gives different password varieties to test the verify method'''
+
+        result_success = self.client.post('/verify',
+                                            data={
+                                                'pw':'one'},
+                                            follow_redirects=True)
+        result_failure = self.client.post('/verify',
+                                            data={
+                                                'pw':'1234'},
+                                            follow_redirects=True)
+
+        self.assertIn(b'Type new name and/or password', result_success.data)
+        self.assertNotIn(b'Wrong password', result_failure.data)
 
 
 

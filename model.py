@@ -128,8 +128,8 @@ def example_data():
     User.query.delete()
     Track.query.delete()
     
-    user1 = User(user_id=1, spot_id=None, name="Admin", email="hbplaymaker@gmail.com", pw="bossbaby")
-    user2 = User(user_id=2, spot_id=None, name="The Boss", email="kayejrosen@gmail.com", pw="mommy")
+    user1 = User(user_id=1, spot_id=None, name="one", email="user1@gmail.com", pw="one")
+    user2 = User(user_id=2, spot_id=None, name="two", email="user2@gmail.com", pw="two")
     track = Track(track_id="6pffNpEoNC6eqqN8lVg57F", title="Testing 1, 2, 3", artist="Barenaked Ladies")
     play1 = Playlist(play_id="0s5hv6JMm6wbuOhAQ8vuau", name="Hello World !", creator_id=2, hype=0)
     play2 = Playlist(play_id="6ZApK6rZbtqQzH2eGTIaPd", name="i need a win", creator_id=1, hype=1)
