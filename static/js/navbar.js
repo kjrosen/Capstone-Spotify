@@ -254,6 +254,22 @@ maker.addEventListener('click', (evt) => {
 		listBox.insertAdjacentText('afterbegin', 'Draw a picture while you wait. Click to draw, double click to stop');
 		listBox.insertAdjacentElement('beforeend', drawingPad);
 
+		const header = document.getElementById('header');
+		const navbar = document.getElementById('navbar');
+		const offHeight = header.offsetHeight + navbar.offsetHeight;
+
+		//an array of colors for the drawing color to cycle through
+		const colors = [
+			'#00cc00',
+			'#0099ff',
+			'#cc33ff',
+			'#ff0000',
+			'#ff9900',
+			'#ffff00'
+		];
+
+		let colorIndex = 0;
+
 		createGrid();
 		
 		//create a new Two object, attached to the drawingpad
@@ -271,7 +287,9 @@ maker.addEventListener('click', (evt) => {
 		drawingPad.addEventListener('mousedown', function(evt) {
 			mouse.set(evt.clientX, evt.clientY);
 			line=null;
+
 			drawingPad.addEventListener('mousemove', drag, false);
+			drawingPad.addEventListener('mousedown', changeColors, false);
 			drawingPad.addEventListener('dblclick', dragEnd, false);
 		}, false);
 
@@ -279,21 +297,9 @@ maker.addEventListener('click', (evt) => {
 
 		//creates a line as you drag the mosue
 		function drag(evt) {
+
 			x = evt.clientX;
 			y = evt.clientY;
-
-
-			//an array of colors for the drawing color to cycle through
-			const colors = [
-				'#00cc00',
-				'#0099ff',
-				'#cc33ff',
-				'#ff0000',
-				'#ff9900',
-				'#ffff00'
-			];
-
-			let colorIndex = 0;
 
 			//if a line doesn't already exist, create it now
 			if (!line) {
@@ -301,7 +307,7 @@ maker.addEventListener('click', (evt) => {
 				const v2 = makePoint(x, y);
 				line = two.makeCurve([v1, v2], true);
 				//TODOchange this to a constantly changing color gradient
-				line.noFill().stroke = colors[0];
+				line.noFill().stroke = colors[colorIndex];
 				line.linewidth = 10;
 
 				line.vertices.forEach(function(v) {
@@ -312,7 +318,6 @@ maker.addEventListener('click', (evt) => {
 			} else {
 				const v1 = makePoint(x, y);
 				line.vertices.push(v1);
-				// line.noFill().stroke == colors[1];
 			}
 			mouse.set(x, y);
 		}
@@ -340,6 +345,7 @@ maker.addEventListener('click', (evt) => {
 			const size = s || 30;
 			let two = new Two({
 				type: Two.Types.canvas,
+				// fullscreen: true,
 				width: size,
 				height: size,
 			});
@@ -348,6 +354,14 @@ maker.addEventListener('click', (evt) => {
 			drawingPad.style.backgroundColor = 'white';
 			drawingPad.style.backgroundImage = `url(${imageData})`;
 			drawingPad.style.backgroundSize = `${size}px`;	
+		}
+
+		//cycle through the colors for drawing on click
+		function changeColors() {
+			colorIndex += 1;
+			if (colorIndex > 5){
+				colorIndex = 0;
+			}
 		}
 
 	});
