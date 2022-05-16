@@ -1,4 +1,9 @@
+import Two from 'https://cdn.skypack.dev/two.js@latest';
+//import two.js to give users something fun to do while waiting for a playlist (it takes a bit)
+
+
 'use strict';
+
 
 // sets event listeners for the constances of the navbar
 const maker = document.getElementById('maker');
@@ -241,6 +246,110 @@ maker.addEventListener('click', (evt) => {
 						});
 				});
 			});
+
+
+		//while waiting for songs to be picked, give the user a drawing pad
+		//save the drawing made and set as the image of the playlist somehow
+		const drawingPad = document.createElement('div');
+		listBox.insertAdjacentText('afterbegin', 'Draw a picture while you wait. Click to draw, double click to stop');
+		listBox.insertAdjacentElement('beforeend', drawingPad);
+
+		createGrid();
+		
+		//create a new Two object, attached to the drawingpad
+		let two = new Two({
+			type: Two.Types.canvas,
+			// fullscreen: true,
+			//TODO: something here is causing a mouse offset, so the lines are appearing about 10px below where the mouse is
+    	fitted: true,
+    	autostart: true
+		}).appendTo(drawingPad);
+
+		let x, y, line, mouse = new Two.Vector(), randomness = 0;
+
+		//on first click, start the drawing event. end a line with a dblclick 
+		drawingPad.addEventListener('mousedown', function(evt) {
+			mouse.set(evt.clientX, evt.clientY);
+			line=null;
+			drawingPad.addEventListener('mousemove', drag, false);
+			drawingPad.addEventListener('dblclick', dragEnd, false);
+		}, false);
+
+		//all functions for drawing while waiting for playlist - made with two.js
+
+		//creates a line as you drag the mosue
+		function drag(evt) {
+			x = evt.clientX;
+			y = evt.clientY;
+
+
+			//an array of colors for the drawing color to cycle through
+			const colors = [
+				'#00cc00',
+				'#0099ff',
+				'#cc33ff',
+				'#ff0000',
+				'#ff9900',
+				'#ffff00'
+			];
+
+			let colorIndex = 0;
+
+			//if a line doesn't already exist, create it now
+			if (!line) {
+				const v1 = makePoint(mouse);
+				const v2 = makePoint(x, y);
+				line = two.makeCurve([v1, v2], true);
+				//TODOchange this to a constantly changing color gradient
+				line.noFill().stroke = colors[0];
+				line.linewidth = 10;
+
+				line.vertices.forEach(function(v) {
+					v.addSelf(line.translation);
+				});
+				line.translation.clear();
+
+			} else {
+				const v1 = makePoint(x, y);
+				line.vertices.push(v1);
+				// line.noFill().stroke == colors[1];
+			}
+			mouse.set(x, y);
+		}
+
+		//stops the move event
+		function dragEnd(evt) {
+			drawingPad.removeEventListener('mousemove', drag, false);
+		}
+
+		//makes a new point to connect lines with movement
+		function makePoint(x, y) {
+			if (arguments.length <= 1) {
+				y = x.y;
+				x = x.x;
+			}
+
+			const v = new Two.Anchor(x, y);
+			v.position = new Two.Vector().copy(v);
+
+			return v;
+		}
+
+		// creates the canvas to draw on
+		function createGrid(s) {
+			const size = s || 30;
+			let two = new Two({
+				type: Two.Types.canvas,
+				width: size,
+				height: size,
+			});
+
+			const imageData = two.renderer.domElement.toDataURL('image/png');
+			drawingPad.style.backgroundColor = 'white';
+			drawingPad.style.backgroundImage = `url(${imageData})`;
+			drawingPad.style.backgroundSize = `${size}px`;	
+		}
+
 	});
 });
 
@@ -396,4 +505,3 @@ if (adjuster.length > 0){
 		});
 	});
 }
-
