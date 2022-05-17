@@ -252,12 +252,10 @@ maker.addEventListener('click', (evt) => {
 		//while waiting for songs to be picked, give the user a drawing pad
 		//save the drawing made and set as the image of the playlist somehow
 		const drawingPad = document.createElement('div');
-		listBox.insertAdjacentText('afterbegin', 'Draw a picture while you wait. Click to draw, double click to stop');
+		listBox.insertAdjacentText('afterbegin', 'Draw a picture while you wait. Click to change colors, double click to stop');
 		listBox.insertAdjacentElement('beforeend', drawingPad);
 
-		const header = document.getElementById('header');
-		const navbar = document.getElementById('navbar');
-		const offHeight = header.offsetHeight + navbar.offsetHeight;
+		const offset = drawingPad.getBoundingClientRect();
 
 		//an array of colors for the drawing color to cycle through
 		const colors = [
@@ -276,10 +274,8 @@ maker.addEventListener('click', (evt) => {
 		//create a new Two object, attached to the drawingpad
 		let two = new Two({
 			type: Two.Types.canvas,
-			fullscreen: true,
-			scrolling: true,
 			//TODO: something here is causing a mouse offset, so the lines are appearing about 10px below where the mouse is
-    	// fitted: true,
+    	fitted: true,
     	autostart: true
 		}).appendTo(drawingPad);
 
@@ -287,7 +283,7 @@ maker.addEventListener('click', (evt) => {
 
 		//on first click, start the drawing event. end a line with a dblclick 
 		drawingPad.addEventListener('mousedown', function(evt) {
-			mouse.set(evt.clientX, evt.clientY);
+			mouse.set(evt.clientX - offset.x, evt.clientY - offset.y);
 			line=null;
 
 			drawingPad.addEventListener('mousemove', drag, false);
@@ -300,15 +296,22 @@ maker.addEventListener('click', (evt) => {
 		//creates a line as you drag the mosue
 		function drag(evt) {
 
-			x = evt.clientX;
-			y = evt.clientY;
+			// console.log(evt);
+
+			// bound = evt.getBoundingClientRect();
+
+			// x = evt.clientX / bound.with * evt.target.width;
+			// y = evt.clientY / bound.height * evt.target.height;
+
+			x = evt.clientX - offset.x;
+			y = evt.clientY - offset.y;
+
 
 			//if a line doesn't already exist, create it now
 			if (!line) {
 				const v1 = makePoint(mouse);
 				const v2 = makePoint(x, y);
 				line = two.makeCurve([v1, v2], true);
-				//TODOchange this to a constantly changing color gradient
 				line.noFill().stroke = colors[colorIndex];
 				line.linewidth = 10;
 
