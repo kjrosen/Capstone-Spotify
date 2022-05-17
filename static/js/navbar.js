@@ -122,9 +122,9 @@ if (authoredPlays.length > 0) {
 			smallPlay.setAttribute('src', `https://open.spotify.com/embed/playlist/${ playlist }?utm_source=generator`);
 			embedBox.innerHTML = ''
 			embedBox.appendChild(smallPlay);
-			embedBox.insertAdjacentHTML('beforeend', '<button>Delete Playlist</button>');
+			embedBox.insertAdjacentHTML('beforeend', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3DB893" class="bi bi-trash3-fill" viewBox="0 0 16 16"><path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/></svg>');
 		
-			const del = document.querySelector('#embed-box button');
+			const del = document.querySelector('#embed-box').lastChild;
 
 			del.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -197,8 +197,8 @@ maker.addEventListener('click', (evt) => {
 				// create a drop down menu for each song choice
 				for (const query of listedSongs) {
 					const track = document.createElement('select');
-					track.setAttribute('class', 'row');
-          			track.appendChild(skip.cloneNode(true));
+					track.setAttribute('class', 'row listedPlay');
+          track.appendChild(skip.cloneNode(true));
 					track.appendChild(spell.cloneNode(true));
 					songPicker.appendChild(track);
 
@@ -211,7 +211,7 @@ maker.addEventListener('click', (evt) => {
 				}
 
 				songPicker.appendChild(button.cloneNode(true));
-				songPicker.removeAttribute('class');
+				songPicker.lastChild.setAttribute('id', 'confirm');
 				songPicker.lastChild.innerText = 'Confirm';
 
 				listBox.appendChild(songPicker);
@@ -464,7 +464,7 @@ if (adjuster.length > 0){
 	adjuster.addEventListener('click', (evt) => {
 		evt.preventDefault();
 
-		formBox.innerHTML = 'Verify your password<br>';
+		formBox.innerHTML = '<label>Verify your password:<br></label>';
 		const verify = queryForm.cloneNode(true);
 		verify.firstChild.setAttribute('type', 'password');
 		verify.lastChild.innerText = 'Confirm'

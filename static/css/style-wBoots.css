@@ -68,7 +68,7 @@ input {
     background-color: black;
 }
 
-#form-box button {
+#form-box button, #confirm {
     margin: 2%;
     background-color:#3DB893;
     border-radius: 40%;
@@ -92,7 +92,6 @@ input {
 }
 
 #seaResults {
-    padding-left: 1em;
     width: inherit;
     border-left-style: solid;
 
@@ -102,6 +101,17 @@ input {
     background: rgb(61,184,147);
     background: linear-gradient(0deg, rgba(61,184,147,0.50) 0%, rgba(100,235,118,0.50) 100%); 
     padding: 1%;
+		width: inherit;
+}
+
+select {
+	border-style: none;
+	margin-bottom: 1em;
+}
+
+#left {
+	padding-left: 2em;
+	padding-right: 2em;
 }
 
 

@@ -284,7 +284,7 @@ def make_spot_playlist(phrase, tracks, author_id):
 
     play_fs = [playlist]
     for track in tracks:
-        spot_user.playlist_add_items(new['id'], [track.track_id])
+        spot_user.playlist_add_items(playlist.play_id, [track.track_id])
         feat = create_feat(track.track_id, playlist.play_id)
         play_fs.append(feat)
 
