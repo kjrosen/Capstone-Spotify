@@ -276,9 +276,10 @@ maker.addEventListener('click', (evt) => {
 		//create a new Two object, attached to the drawingpad
 		let two = new Two({
 			type: Two.Types.canvas,
-			// fullscreen: true,
+			fullscreen: true,
+			scrolling: true,
 			//TODO: something here is causing a mouse offset, so the lines are appearing about 10px below where the mouse is
-    	fitted: true,
+    	// fitted: true,
     	autostart: true
 		}).appendTo(drawingPad);
 
