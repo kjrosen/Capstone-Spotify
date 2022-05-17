@@ -1,6 +1,5 @@
-import Two from 'https://cdn.skypack.dev/two.js@latest';
 //import two.js to give users something fun to do while waiting for a playlist (it takes a bit)
-
+import Two from 'https://cdn.skypack.dev/two.js@latest';
 
 'use strict';
 
@@ -8,19 +7,21 @@ import Two from 'https://cdn.skypack.dev/two.js@latest';
 // sets event listeners for the constances of the navbar
 const maker = document.getElementById('maker');
 const searcher = document.getElementById('searcher');
-let joiner = document.querySelectorAll('#joiner');
 
+// only viewable depending on session data
+let joiner = document.querySelectorAll('#joiner');
+let adjuster = document.querySelectorAll('#adjuster');
+
+// boxes that results will render into
 const formBox = document.getElementById('form-box');
 const listBox = document.getElementById('left-top');
 const embedBox = document.getElementById('embed-box');
-
-let adjuster = document.querySelectorAll('#adjuster');
-// let connect = docuement.querySelectorAll('#connect');
 
 
 //the basic input form used by both maker and searcher
 const queryForm = document.createElement('form');
 const inputText = document.createElement('input');
+inputText.setAttribute('class', 'input');
 inputText.setAttribute('type', 'text');
 const button = document.createElement('button');
 button.setAttribute('type', 'submit');
@@ -38,14 +39,10 @@ embedPlay.setAttribute('allowfullscreen', '');
 embedPlay.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture')
 
 
-//and X-out options for search results to clear the field
-const ex = document.createElement('button');
-ex.innerText = 'X'
-ex.setAttribute('type', 'button')
-
 // for search results always fill on top left list
 const results = document.createElement('ul');
 results.setAttribute('class', 'container');
+results.setAttribute('id', 'seaResults');
 
 
 //the feature that lets listed playlists be embedable
@@ -60,11 +57,14 @@ function embedListedPlay(list_box=results) {
 			smallPlay.setAttribute('src', `https://open.spotify.com/embed/playlist/${ playlist }?utm_source=generator`);
 			embedBox.innerHTML = ''
 			embedBox.appendChild(smallPlay);
-			embedBox.insertAdjacentHTML('beforeend', '<button>Like</button>');
+			embedBox.insertAdjacentHTML('beforeend', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#EDA1DB" class="bi bi-heart-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg>');
+			embedBox.lastChild.setAttribute('id', 'liker');
+			embedBox.lastChild.setAttribute('type', 'button');
+
 
 			// when playlists render to the embed box
 			// they become likable
-			const like = document.querySelector('#embed-box button')
+			const like = document.querySelector('#embed-box').lastChild;
 			like.addEventListener('click', (evt) => {
 				evt.preventDefault();
 
@@ -157,7 +157,8 @@ if (likedPlays.length > 0) {
 
 // on click a make bar appears in the right bar
 maker.addEventListener('click', (evt) => {
-	
+	evt.preventDefault();
+
 	const makeForm = queryForm.cloneNode(true);
 	makeForm.lastChild.innerText = 'New';
 	formBox.innerHTML = '';
@@ -370,7 +371,8 @@ maker.addEventListener('click', (evt) => {
 
 // on click a search bar appears in the right bar
 searcher.addEventListener('click', (evt) => {
-	
+	evt.preventDefault();
+
 	const seaForm = queryForm.cloneNode(true);
 	seaForm.lastChild.innerText = 'Search';
 	formBox.innerHTML = '';
@@ -389,22 +391,25 @@ searcher.addEventListener('click', (evt) => {
 			.then(results => results.json())
 			.then(resLists => {
 				
-				listBox.innerHTML = `<h3 col="row">${queryString}</h3>`;
+				listBox.innerHTML = `<h3 class="row">${queryString}</h3>`;
 				results.innerHTML = ''
 
 				if (resLists.length > 0) {
 					for (const item of resLists) {
-						results.insertAdjacentHTML('beforeend', `<li class="row" id="${item['play id']}">${item['play name']} by ${item['author name']}</li>`);
+						results.insertAdjacentHTML('beforeend', `<li class="row listedPlay" id="${item['play id']}">${item['play name']} by ${item['author name']}</li>`);
 					}
 				} else {
 					results.insertAdjacentHTML('beforeend', 'No results');
 				}
 				
 				listBox.appendChild(results);
-				listBox.insertAdjacentElement('afterbegin', ex);
+				listBox.insertAdjacentHTML('afterbegin', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3DB893" class="bi bi-x-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg>');
+				const exButton = listBox.firstChild;
+				exButton.setAttribute('id', 'exField');
+				exButton.setAttribute('type', 'button');
 				embedListedPlay(results);
 
-				ex.addEventListener('click', (evt) => {
+				listBox.firstChild.addEventListener('click', (evt) => {
 					evt.preventDefault();
 					listBox.innerHTML = '';
 				});
@@ -418,6 +423,7 @@ searcher.addEventListener('click', (evt) => {
 if (joiner.length > 0) {
 	joiner = joiner[0];
 	joiner.addEventListener('click', (evt) => {
+		evt.preventDefault();
 		// TODO: 
 		// Passwords are being taken insecurily apparnetly
 		//the longer forms for log in and sign up
@@ -456,6 +462,8 @@ if (adjuster.length > 0){
 	adjuster = adjuster[0];
 
 	adjuster.addEventListener('click', (evt) => {
+		evt.preventDefault();
+
 		formBox.innerHTML = 'Verify your password<br>';
 		const verify = queryForm.cloneNode(true);
 		verify.firstChild.setAttribute('type', 'password');

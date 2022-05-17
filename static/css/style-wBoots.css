@@ -1,60 +1,110 @@
-body {
-    font-family: Futura, Ubuntu, Karla, monospace;
-    background-color: rgb(0, 33, 17);
-    color:rgb(223, 216, 222);
-}
-
-#navbar {
-    text-align: center;
-    padding: 1%;
-}
-a visited{
-    color:rgb(223, 216, 222);
-    text-decoration: none;
-}
-a:hover{
-    color:rgb(223, 216, 222);
-    text-decoration: none;
-}
-a {
-    color:rgb(223, 216, 222);
-    text-decoration: none;
-}
-
 #header {
+    font-family: 'Lato', monospace;
+    font-weight: bold 700;
     text-align: center;
-    background-color:rgb(0, 173, 84);
     font-size: 2em;
     padding: 1%;
 }
-
-#header a{
-    color:rgb(0, 17, 0);
-}
 #header a visited{
-    color:rgb(0, 17, 0);
     text-decoration: none;
+    color: floralwhite;
 }
 #header a:hover{
-    color:rgb(0, 17, 0);
     text-decoration: none;
+    color: floralwhite;
 }
 #header a {
-    color:rgb(0, 17, 0);
     text-decoration: none;
+    color: floralwhite;
 }
 
-#left {
-    background-color: rgb(53, 78, 65);
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    background-image: url('/static/images/stripe-colors.jpg');  
+    color: floralwhite; 
+}
+
+#navbar, #foot {
+    text-align: center;
+    background-color: #64EB76;
+    padding: 1%;
+    width: 100%;
+    color: black;
+}
+#navbar button {
+    border: none;
+    background-color: #64EB76;
+    font-weight: bold;
+}
+#navbar button hover{
+    background-color: #64EB76;
+}
+
+#foot button {
+    border: none;
+    background-color: #64EB76;
+    font-weight: bold;
+}
+#foot button hover{
+    background-color: #64EB76;
+}
+
+
+input {
+    width: inherit;
 }
 
 #right {
-    background-color:rgb(0, 17, 0);
+    background-color: #30168F;
+    font-weight: bold;
+    color:floralwhite
 }
 
-button {
-    margin: 2%;
+#left, #right {
+    padding-top: 1em;
 }
+
+#left {
+    background-color: black;
+}
+
+#form-box button {
+    margin: 2%;
+    background-color:#3DB893;
+    border-radius: 40%;
+    border-width: 1px;
+    border-color: #64EB76;
+    width: fit-content;
+    border-style: solid;
+}
+
+#embed-box {
+    padding-top: 1em;
+}
+
+#liker {
+    margin-top: 1em;
+}
+
+#exField, #liker {
+    width:fit-content;
+    margin-left: revert;
+}
+
+#seaResults {
+    padding-left: 1em;
+    width: inherit;
+    border-left-style: solid;
+
+}
+
+.listedPlay {
+    background: rgb(61,184,147);
+    background: linear-gradient(0deg, rgba(61,184,147,0.50) 0%, rgba(100,235,118,0.50) 100%); 
+    padding: 1%;
+}
+
+
 
 
 

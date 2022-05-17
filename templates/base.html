@@ -7,48 +7,44 @@
 		<!-- load two.js -->
 		<script src="./path-to-two/two.js"></script>
 
+		<!-- load fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Montserrat&family=Source+Sans+Pro&display=swap" rel="stylesheet">
+		
+		<!-- load stylesheet -->
 		<link rel="stylesheet" href="/static/css/style-wBoots.css">
+		
+		<!-- load favicon -->
 		<link rel="icon" type="image/x-icon" href="/static/images/spotibanana.png">
 
 		<title>{% block head %}  {% endblock%}</title>
 	</head>
-    <body>
-			<div id="header">
+    <body class="container">
+			<div id="header" class="row">
 				<a href="/">Playlist Maker</a>
 			</div>
 
 			<!-- navbar always appears on the top of the page, below the header -->
-			<div class="container" id="navbar">
-				<div class="row">
-					<!-- spans in navbar are handled by navbar.js events -->
-					<span class="col" id="maker">New</span>
-					<span class="col" id="searcher">Search</span>
-					<!-- links go to new routes, only showable to logged in users 
-					links only show up deppending on session info-->
-					{% if session['login'] != False %}
-						<a class="col" href="/mine">My Playlists</a>
-						<a class="col" href="/logout">Log out</a>	
-					{% else %}
-						<span class="col" id="joiner">Join</span>
-					{% endif %}
-				</div>
+			<div class="row" id="navbar">
+				<!-- spans in navbar are handled by navbar.js events -->
+				<button class="col" id="maker">New</button>
+				<button class="col" id="searcher">Search</button>
+				<!-- links go to new routes, only showable to logged in users 
+				links only show up deppending on session info-->
+				{% if session['login'] != False %}
+					<button class="col" id="mine" onClick="location.href='/mine'">My Playlists</button>
+					<button class="col" id="logout" onClick="location.href='/logout'">Log out</button>	
+				{% else %}
+					<button class="col" id="joiner">Join</button>
+				{% endif %}
 			</div>
 
-			<div class="container" id="results">
-				<span class="row gx-5">
-					<!-- recently created playlists and search results -->
-					<span class="col-8" id="left">
-						<span class="row" id="left-top">
-							
-						</span>
-						{% block leftTop %} {% endblock %}
-						<span class="row" id="left-low">
-							
-						</span>
-						{% block leftLow %} {% endblock %}
-					</span>
 
-					<span class="col-4" id="right">
+			<div class="row" id="results">
+				<span class="row">
+					<!-- form boxes and flash messages -->
+					<span class="col-12 col-md-4 order-md-2" id="right">
 						<span class="row" id="form-box" id="flash">
 							<ul>
 								<!-- Flash any messages (login info) -->
@@ -61,11 +57,24 @@
 
 						</div>
 					</span>
+
+					<!-- recently created playlists and search results -->
+					<span class="col-12 col-md-8 order-md-1" id="left">
+						<span class="row" id="left-top">
+							
+						</span>
+						{% block leftTop %} {% endblock %}
+						<span class="row" id="left-low">
+							
+						</span>
+						{% block leftLow %} {% endblock %}
+					</span>
+					
 				</span>
 			</div>
 
 			<footer class="row" id="foot">
-				<span class="col">
+				<span class="col offset-9">
 					{% block foot %} {% endblock %}
 				</span>
 				
