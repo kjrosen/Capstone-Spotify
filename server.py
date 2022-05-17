@@ -159,8 +159,6 @@ def choose_songs():
 
     options = crud.get_tracklist_opts(name)
 
-    time.sleep(10000000000000000000000000000)
-
     return jsonify(options)
 
 

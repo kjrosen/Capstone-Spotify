@@ -254,7 +254,9 @@ maker.addEventListener('click', (evt) => {
 		const drawingPad = document.createElement('div');
 		listBox.insertAdjacentText('afterbegin', 'Draw a picture while you wait. Click to change colors, double click to stop');
 		listBox.insertAdjacentElement('beforeend', drawingPad);
+		
 
+		//using a fitted window requires adjusting for the distance between view window and canvas window
 		const offset = drawingPad.getBoundingClientRect();
 
 		//an array of colors for the drawing color to cycle through
@@ -296,16 +298,8 @@ maker.addEventListener('click', (evt) => {
 		//creates a line as you drag the mosue
 		function drag(evt) {
 
-			// console.log(evt);
-
-			// bound = evt.getBoundingClientRect();
-
-			// x = evt.clientX / bound.with * evt.target.width;
-			// y = evt.clientY / bound.height * evt.target.height;
-
 			x = evt.clientX - offset.x;
 			y = evt.clientY - offset.y;
-
 
 			//if a line doesn't already exist, create it now
 			if (!line) {
