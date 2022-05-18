@@ -5,7 +5,7 @@
     font-size: 2em;
     padding: 1%;
 }
-#header a visited{
+#header a:visited{
     text-decoration: none;
     color: floralwhite;
 }
@@ -31,22 +31,14 @@ body {
     width: 100%;
     color: black;
 }
-#navbar button {
+#navbar button, #foot button {
     border: none;
     background-color: #64EB76;
     font-weight: bold;
-}
-#navbar button hover{
-    background-color: #64EB76;
 }
 
-#foot button {
-    border: none;
-    background-color: #64EB76;
-    font-weight: bold;
-}
-#foot button hover{
-    background-color: #64EB76;
+#navbar button:hover, #foot button:hover {
+    color: floralwhite;
 }
 
 

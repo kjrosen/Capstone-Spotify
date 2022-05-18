@@ -446,6 +446,7 @@ if (joiner.length > 0) {
 		logForm.insertAdjacentHTML('afterbegin', '<label>Password: </label>');
 		const emai = inputText.cloneNode(true);
 		emai.setAttribute('name', 'email');
+		emai.setAttribute('type', 'email');
 		logForm.insertAdjacentElement('afterbegin', emai);
 		logForm.insertAdjacentHTML('afterbegin', '<label>Email: </label>');
 		const logButt = logForm.lastChild;
