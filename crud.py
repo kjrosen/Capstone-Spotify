@@ -223,10 +223,11 @@ def get_songs_to_spell_word(word):
             char = 'pea'
         elif lett == "t":
             char = 'tea'
+        elif lett == "m":
+            char = "mmm mmm"
         else:
             char = lett
 
-        print('\n\n\n\n\n\n\n', char)
         char_choice = []
         ## create a collection of search options just like for a regular word    
         char_choice.append(char)

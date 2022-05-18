@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, session, flash, jsonify
 import jinja2, os
 import crud, model
-import time
+from time import sleep
 
 app = Flask(__name__)
 model.connect_to_db(app)
@@ -158,6 +158,7 @@ def choose_songs():
     name = request.json.get('new')
 
     options = crud.get_tracklist_opts(name)
+    sleep(5)
 
     return jsonify(options)
 
@@ -175,6 +176,7 @@ def make_playlist():
 
     tracklist = crud.add_songs_to_tracklist(phrase, tracks)
     playlist = crud.make_spot_playlist(phrase, tracklist, author_id)
+    # sleep(3)
 
     return playlist
 

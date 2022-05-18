@@ -23,13 +23,14 @@
     <body class="container">
 			<div id="header" class="row">
 				<a href="/">Playlist Maker</a>
+				<h3>tell a story with your music</h3>
 			</div>
 
 			<!-- navbar always appears on the top of the page, below the header -->
 			<div class="row" id="navbar">
 				<!-- spans in navbar are handled by navbar.js events -->
-				<button class="col" id="maker">New</button>
-				<button class="col" id="searcher">Search</button>
+				<button class="col" id="maker">New Playlist</button>
+				<button class="col" id="searcher">Search Playlists</button>
 				<!-- links go to new routes, only showable to logged in users 
 				links only show up deppending on session info-->
 				{% if session['login'] != False %}
@@ -75,7 +76,7 @@
 
 			<footer class="row" id="foot">
 				{% if session['login'] != False %} 
-					<button class="col offset-9" id="adjuster">account details</button>
+					<button class="col offset-9" id="adjuster">Change Account Details</button>
 				{% endif %}
 				{% block foot %} {% endblock %}
 				

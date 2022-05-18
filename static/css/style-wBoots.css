@@ -55,7 +55,7 @@ input {
 }
 
 #right {
-    background-color: #30168F;
+    background-color: #270066;
     font-weight: bold;
     color:floralwhite
 }
@@ -86,7 +86,7 @@ input {
     margin-top: 1em;
 }
 
-#exField, #liker {
+#exField, #liker, #del {
     width:fit-content;
     margin-left: revert;
 }

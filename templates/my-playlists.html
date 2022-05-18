@@ -4,7 +4,7 @@
 
 {% block leftTop %} 
 <h2 class="row">Welcome, {{ user_name }}</h2>
-<h3 class="row">authored playlists</h3>
+<h3 class="row">Authored Playlists</h3>
 <ul class="container" id="authored">
 	{% for play in created %}
 		<li class="row" id={{ play['play id'] }}>{{ play['play name'] }}</li>
