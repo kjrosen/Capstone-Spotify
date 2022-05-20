@@ -48,11 +48,11 @@ def adds_punctuation(word):
     
     for example
     >>> adds_punctuation('Hello')
-    ['Hello.', 'Hello!', 'Hello?', 'Hello,', 'Hello...']
+    ['Hello.', 'Hello!', 'Hello?', 'Hello,', 'Hello...', '...Hello]
     
     """
 
-    return [word+".", word+"!", word+"?", word+",", word+"...", word+"+"]
+    return [word+".", word+"!", word+"?", word+",", word+"...", word+"+" "..."+word]
 
 def make_ngrams(words):
     """takes in a list of strings and returns a dictionary of lists
