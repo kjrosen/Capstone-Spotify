@@ -12,16 +12,9 @@ def remove_punctuation(phrase):
     'Hello  world '
     """
 
-    phrase = phrase.replace(".","")
-    phrase = phrase.replace(",","")
-    phrase = phrase.replace("-","")
-    phrase = phrase.replace("!","")
-    phrase = phrase.replace("?","")
-    phrase = phrase.replace(":", "")
-    phrase = phrase.replace('"', '')
-    phrase = phrase.replace(';', '')
-    phrase = phrase.replace('/', '')
-    phrase = phrase.replace("'", "")
+    for char in phrase:
+        if char not in "1234567890abcdefghijklmnopqrstuvwxyz ":
+            phrase = phrase.replace(char,"")
 
     return phrase
 
@@ -52,7 +45,7 @@ def adds_punctuation(word):
     
     """
 
-    return [word+".", word+"!", word+"?", word+",", word+"...", word+"+" "..."+word]
+    return [word+".", word+"!", word+"?", word+",", word+"...", word+"+", "..."+word]
 
 def make_ngrams(words):
     """takes in a list of strings and returns a dictionary of lists
@@ -78,9 +71,11 @@ def make_ngrams(words):
                 collection[w].add((" ".join(after)).title())
             if len(before) > 0:
                 collection[w].add((" ".join(before)).title())
+            if len(before) > 0 and len(after) > 0:
+                collection[w].add((" ".join(before[:-1]+after)).title())
 
     for col in collection:
-        collection[col] = sorted(list(collection[col]))
+        collection[col] = sorted(list(collection[col]), key=len)
 
     return collection
 
@@ -95,15 +90,14 @@ def make_search_options(phrase):
     
     For example:
     >>> make_search_options('the quick brown fox')
-    {0: ['The', 'The Quick', 'The Quick Brown', 'The Quick Brown Fox', 'The.', 'The!', 'The?', 'The,', 'The...', 'T.h.e.', 'THE', 'the', 'The', 'T.H.E.', 'THE.', 'THE!', 'THE?', 'THE,', 'THE...', 'the.', 'the!', 'the?', 'the,', 'the...'], 1: ['Quick', 'Quick Brown', 'Quick Brown Fox', 'The Quick', 'Quick.', 'Quick!', 'Quick?', 'Quick,', 'Quick...', 'Q.u.i.c.k.', 'QUICK', 'quick', 'Quick', 'Q.U.I.C.K.', 'QUICK.', 'QUICK!', 'QUICK?', 'QUICK,', 'QUICK...', 'quick.', 'quick!', 'quick?', 'quick,', 'quick...'], 2: ['Brown', 'Brown Fox', 'Quick Brown', 'The Quick Brown', 'Brown.', 'Brown!', 'Brown?', 'Brown,', 'Brown...', 'B.r.o.w.n.', 'BROWN', 'brown', 'Brown', 'B.R.O.W.N.', 'BROWN.', 'BROWN!', 'BROWN?', 'BROWN,', 'BROWN...', 'brown.', 'brown!', 'brown?', 'brown,', 'brown...'], 3: ['Brown Fox', 'Fox', 'Quick Brown Fox', 'The Quick Brown Fox', 'Brown Fox.', 'Brown Fox!', 'Brown Fox?', 'Brown Fox,', 'Brown Fox...', 'B.r.o.w.n. .F.o.x.', 'BROWN FOX', 'brown fox', 'Brown Fox', 'B.R.O.W.N. .F.O.X.', 'BROWN FOX.', 'BROWN FOX!', 'BROWN FOX?', 'BROWN FOX,', 'BROWN FOX...', 'brown fox.', 'brown fox!', 'brown fox?', 'brown fox,', 'brown fox...']}
+    {0: ['The', 'The Quick', 'The Quick Brown', 'The Quick Brown Fox', 'The.', 'The!', 'The?', 'The,', 'The...', 'The+', '...The', 'T.h.e.', 'THE', 'the', 'The', 'T.H.E.', 'THE.', 'THE!', 'THE?', 'THE,', 'THE...', 'THE+', '...THE', 'the.', 'the!', 'the?', 'the,', 'the...', 'the+', '...the'], 1: ['Quick', 'The Quick', 'Quick Brown', 'Quick Brown Fox', 'Quick.', 'Quick!', 'Quick?', 'Quick,', 'Quick...', 'Quick+', '...Quick', 'Q.u.i.c.k.', 'QUICK', 'quick', 'Quick', 'Q.U.I.C.K.', 'QUICK.', 'QUICK!', 'QUICK?', 'QUICK,', 'QUICK...', 'QUICK+', '...QUICK', 'quick.', 'quick!', 'quick?', 'quick,', 'quick...', 'quick+', '...quick'], 2: ['Brown', 'Brown Fox', 'Quick Brown', 'Quick Brown Fox', 'The Quick Brown', 'The Quick Brown Fox', 'Brown.', 'Brown!', 'Brown?', 'Brown,', 'Brown...', 'Brown+', '...Brown', 'B.r.o.w.n.', 'BROWN', 'brown', 'Brown', 'B.R.O.W.N.', 'BROWN.', 'BROWN!', 'BROWN?', 'BROWN,', 'BROWN...', 'BROWN+', '...BROWN', 'brown.', 'brown!', 'brown?', 'brown,', 'brown...', 'brown+', '...brown'], 3: ['Fox', 'Brown Fox', 'Quick Brown Fox', 'The Quick Brown Fox', 'Fox.', 'Fox!', 'Fox?', 'Fox,', 'Fox...', 'Fox+', '...Fox', 'F.o.x.', 'FOX', 'fox', 'Fox', 'F.O.X.', 'FOX.', 'FOX!', 'FOX?', 'FOX,', 'FOX...', 'FOX+', '...FOX', 'fox.', 'fox!', 'fox?', 'fox,', 'fox...', 'fox+', '...fox']}
     """
 
-    simple_words = remove_punctuation(phrase).split()
-    word_dict = make_ngrams(simple_words)
+    word_dict = make_ngrams(phrase.split())
 
     for word_i in word_dict:
-        word = word_dict[word_i][0]
-  
+        word = remove_punctuation(word_dict[word_i][0])
+
         word_dict[word_i] += adds_punctuation(word)
         word_dict[word_i].append(make_acronym(word))
         word_dict[word_i].append(word.upper())
@@ -114,5 +108,6 @@ def make_search_options(phrase):
         word_dict[word_i] += adds_punctuation(word.lower())
 
     return word_dict
+
 
     

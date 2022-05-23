@@ -78,7 +78,7 @@ input {
     margin-top: 1em;
 }
 
-#exField, #liker, #del {
+#exField, #liker, #del, #github {
     width:fit-content;
     margin-left: revert;
 }

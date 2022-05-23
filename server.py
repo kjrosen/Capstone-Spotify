@@ -35,8 +35,6 @@ def sign_in():
         flash('Wrong password and/or email')
     else:
         session['login'] = user_id
-        ##TODO: remember this is still here
-        # return redirect('/auth')
     
     return redirect('/')
 
@@ -55,8 +53,7 @@ def sign_up():
         flash('Email taken')
     else:
         session['login'] = user_id
-        ##TODO: remember this is here
-        # return redirect('/auth')
+
     return redirect('/')
         
 
@@ -86,7 +83,7 @@ def check_user():
 @app.route('/update', methods=['POST'])
 def update_user_info():
     '''updates the user's name or password
-    emails cannot be updated at this time TODO: add extra checks to make emails changable'''
+    emails cannot be updated at this time'''
 
     new_pw = request.json.get('pw')
     new_name = request.json.get('name')
@@ -150,6 +147,7 @@ def delete_playlist():
 
     return response
 
+
 ## playlist creation based view functions
 @app.route('/pick.json', methods=['POST'])
 def choose_songs():
@@ -158,7 +156,7 @@ def choose_songs():
     name = request.json.get('new')
 
     options = crud.get_tracklist_opts(name)
-    sleep(5)
+    sleep(5) ##set minimum drawing time so short messages don't flash the drawing pad off and on too quick
 
     return jsonify(options)
 
@@ -176,7 +174,6 @@ def make_playlist():
 
     tracklist = crud.add_songs_to_tracklist(phrase, tracks)
     playlist = crud.make_spot_playlist(phrase, tracklist, author_id)
-    # sleep(3)
 
     return playlist
 

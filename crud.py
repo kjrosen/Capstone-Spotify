@@ -4,7 +4,6 @@ from model import Track, Feat, Playlist, Likes, User, connect_to_db, db
 from random import choice
 import search_helpers
 
-## imported to crud from server on 4/19
 import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -171,6 +170,7 @@ def get_songs_by_search_list(query):
     and because 500 is a lot of songs to result in nothing'''
 
     search = get_tracks_by_title(query)
+    search += get_tracks_with_multi_artists(query)
 
     q_num = 0
     while len(search) == 0 and q_num < 10:
@@ -194,7 +194,6 @@ def get_tracklist_opts(phrase):
 
     for query in query_dict:
         song_opts = get_songs_by_search_list(query_dict[query])
-        # query_dict[query].append(songs_opts)
 
         tracklist = []
         if len(song_opts) == 0:
@@ -202,6 +201,7 @@ def get_tracklist_opts(phrase):
         else:
             for song in song_opts:
                 tracklist.append({'track_id': song.track_id, 'song title': song.title, 'song artist': song.artist})
+
         options.append(tracklist)
 
     return options
@@ -229,6 +229,7 @@ def get_songs_to_spell_word(word):
             char = lett
 
         char_choice = []
+
         ## create a collection of search options just like for a regular word    
         char_choice.append(char)
         char_choice.append(char.upper())
@@ -275,9 +276,6 @@ def make_spot_playlist(phrase, tracks, author_id):
 
     returns the playlist id for embedding
     '''
-  
-    ## cannot give spotify ownership to users - TODO:
-    ## figure out how to give it to them
 
     new = spot_user.user_playlist_create(app_id, phrase)
 
@@ -380,7 +378,7 @@ def remove_playlist(playlist_id):
 
     return "Playlist deleted"
 
-## TODO: retest out different join methods make one db query, and one for loop
+
 def show_user_plays(user_id):
     '''creates a dictionary of likes and creations
     for a given user'''
