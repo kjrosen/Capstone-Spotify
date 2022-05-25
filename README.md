@@ -61,7 +61,7 @@ Seed.py does not build an admin user, but creating one using the Spotify Develop
 
 ## UX and Code behind it
 First, users input the name of their playlist, which is sent with an AJAX request to the server to filter through the database. While the server runs, an interactive canvas is generated for the user to draw with.
-![pic](static/images/CanvasPic.png)
+![pic](static/images/Canvas-Pic.png)
 
 The database creates search queries out of common versions of the word used in track titles (including instances when a guest artist is featured in the title) and ngrams of the word within the phrase.
 ![pic](static/images/SearchQueries.png)
