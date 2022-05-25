@@ -282,7 +282,6 @@ maker.addEventListener('click', (evt) => {
 
 	//on submit create a new event to make the playlist
 	//goes to /make and fetches a playlist
-	//renders to leftbox
 	makeForm.addEventListener('submit', (evt) => {
 		evt.preventDefault();
 

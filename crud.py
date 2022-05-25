@@ -239,6 +239,7 @@ def get_songs_to_spell_word(word):
         char_choice += search_helpers.adds_punctuation(char.title())
         
         opts = get_songs_by_search_list(char_choice)
+        opts += get_tracks_with_multi_artists(char_choice)
 
         if len(opts) > 1:
             acronym.append(choice(opts))
