@@ -1,3 +1,5 @@
+
+
 def remove_punctuation(phrase):
     """removes all punctuation from a word or phrase
     
@@ -11,6 +13,7 @@ def remove_punctuation(phrase):
     >>> remove_punctuation('H.ello-? : world; /')
     'Hello  world '
     """
+    phrase = phrase.lower()
 
     for char in phrase:
         if char not in "1234567890abcdefghijklmnopqrstuvwxyz ":
@@ -96,16 +99,26 @@ def make_search_options(phrase):
     word_dict = make_ngrams(phrase.split())
 
     for word_i in word_dict:
-        word = remove_punctuation(word_dict[word_i][0])
+        word = word_dict[word_i][0]
+        word_simple = remove_punctuation(word)
 
+        word_dict[word_i] += adds_punctuation(word_simple)
+        word_dict[word_i] += adds_punctuation(word_simple.upper())
+        word_dict[word_i] += adds_punctuation(word_simple.lower())
         word_dict[word_i] += adds_punctuation(word)
-        word_dict[word_i].append(make_acronym(word))
+        word_dict[word_i] += adds_punctuation(word.upper())
+        word_dict[word_i] += adds_punctuation(word.lower())
+
+        word_dict[word_i].append(make_acronym(word_simple))
+        word_dict[word_i].append(make_acronym(word_simple.upper()))
+        word_dict[word_i].append(make_acronym(word_simple.lower()))
+
         word_dict[word_i].append(word.upper())
         word_dict[word_i].append(word.lower())
         word_dict[word_i].append(word.title())
-        word_dict[word_i].append(make_acronym(word.upper()))
-        word_dict[word_i] += adds_punctuation(word.upper())
-        word_dict[word_i] += adds_punctuation(word.lower())
+        word_dict[word_i].append(word_simple.upper())
+        word_dict[word_i].append(word_simple.lower())
+        word_dict[word_i].append(word_simple.title())
 
     return word_dict
 

@@ -225,6 +225,8 @@ def get_songs_to_spell_word(word):
             char = 'tea'
         elif lett == "m":
             char = "mmm mmm"
+        elif lett == "w":
+            char = "uu"
         else:
             char = lett
 
